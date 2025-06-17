@@ -4,7 +4,7 @@
 >
 > If you want to use this project, perform your own verification or send an email to [admin@cmta.ch](mailto:admin@cmta.ch).
 
-The SnapshotEngine is a contract to perform on-chain snapshot, useful to distribute dividends on-chain
+The **SnapshotEngine** is a contract to perform on-chain snapshot, useful to distribute dividends on-chain.
 
 It is destined to be used with a standard ERC-20 contract (e.g CMTAT)
 
@@ -68,10 +68,9 @@ are the latest ones that we tested:
 - Hardhat ^2.22.7
 - Solidity 0.8.28 (via solc-js)
 - Node 20.5.0
-- CMTAT [v2.5.1](https://github.com/CMTA/CMTAT/releases/tag/v2.5.1)
-- OpenZeppelin Contracts (Node.js module) [v5.2.0](https://github.com/OpenZeppelin/openzeppelin-contracts/releases/tag/v5.2.0) 
-- OpenZeppelin Contracts (Node.js module) [v5.2.0](https://github.com/OpenZeppelin/openzeppelin-contracts/releases/tag/v5.2.0) 
-- OpenZeppelin Contracts Upgradeable (Node.js module) [v5.2.0](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/releases/tag/v5.0.2) (to compile CMTAT)
+- CMTAT [v3.0.0-rc2](https://github.com/CMTA/CMTAT/releases/tag/v3.0.0-rc2)
+- OpenZeppelin Contracts (Node.js module) [v5.3.0](https://github.com/OpenZeppelin/openzeppelin-contracts/releases/tag/v5.3.0) 
+- OpenZeppelin Contracts Upgradeable (Node.js module) [v5.3.0](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/releases/tag/v5.3.0) (to compile CMTAT)
 
 
 ### Installation

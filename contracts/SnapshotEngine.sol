@@ -18,7 +18,7 @@ contract SnapshotEngine is SnapshotBase, AccessControl, ISnapshotEngine, ISnapsh
     * @notice 
     * Get the current version of the smart contract
     */
-    string public constant VERSION = "0.1.0";
+    string public constant VERSION = "0.2.0";
     IERC20 immutable erc20;
     
     /* ============ Constructor ============ */

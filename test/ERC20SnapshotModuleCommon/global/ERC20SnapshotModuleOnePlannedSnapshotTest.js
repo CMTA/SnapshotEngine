@@ -32,6 +32,7 @@ function ERC20SnapshotModuleOnePlannedSnapshotTest () {
 
     it('testCanMintTokens', async function () {
       const MINT_AMOUNT = '20'
+      const MINT_AMOUNT_TYPED = ethers.Typed.uint256(20)
       // Arrange - Assert
       await checkSnapshot.call(
         this,
@@ -42,12 +43,9 @@ function ERC20SnapshotModuleOnePlannedSnapshotTest () {
       );
       // Act
       // Gas and gasPrice are fixed arbitrarily
-      ({ logs: this.logs } = await this.cmtat
+      this.logs  = await this.cmtat
         .connect(this.admin)
-        .mint(this.address1, MINT_AMOUNT, {
-          gas: 5000000,
-          gasPrice: 500000000
-        }))
+        .mint(this.address1, MINT_AMOUNT_TYPED)
 
       // Assert
       // Values before the snapshot
@@ -79,6 +77,7 @@ function ERC20SnapshotModuleOnePlannedSnapshotTest () {
     })
 
     it('testCanBurnTokens', async function () {
+      const REASON_TYPED = ethers.Typed.bytes(ethers.toUtf8Bytes(reason))
       const BURN_AMOUNT = '20'
       // Arrange - Assert
       await checkSnapshot.call(
@@ -92,10 +91,7 @@ function ERC20SnapshotModuleOnePlannedSnapshotTest () {
       // Act
       await this.cmtat
         .connect(this.admin)
-        .burn(this.address1, BURN_AMOUNT, reason, {
-          gas: 5000000,
-          gasPrice: 500000000
-        })
+        .burn(this.address1, BURN_AMOUNT, REASON_TYPED)
 
       // Assert
       // Values before the snapshot

@@ -18,7 +18,10 @@ Please follow <https://changelog.md/> conventions.
   
   - Update changelog
 
+## 0.2.0
 
+- Update CMTAT to [v3.0.0-rc2](https://github.com/CMTA/CMTAT/releases/tag/v3.0.0-rc2)
+- Update OpenZeppelin library to [v5.3.0](https://github.com/OpenZeppelin/openzeppelin-contracts/releases/tag/v5.3.0)
 
 ## 0.1.0
 
