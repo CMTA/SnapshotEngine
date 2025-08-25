@@ -2,13 +2,13 @@
 
 pragma solidity ^0.8.20;
 
-import  "../../CMTAT/contracts/CMTAT_STANDALONE.sol";
-
+import  {CMTATStandalone} from "../../CMTAT/contracts/deployment/CMTATStandalone.sol";
+import  {ICMTATConstructor} from "../../CMTAT/contracts/interfaces/technical/ICMTATConstructor.sol";
 
 /**
  * @dev using to make available CMTAT_STANDALONE in hardhat test
  */
-contract CMTAT_STANDALONE_MOCK is CMTAT_STANDALONE {
+contract CMTAT_STANDALONE_MOCK is CMTATStandalone {
         /**
      * @notice Contract version for standalone deployment
      * @param forwarderIrrevocable address of the forwarder, required for the gasless support
@@ -22,8 +22,8 @@ contract CMTAT_STANDALONE_MOCK is CMTAT_STANDALONE {
         address forwarderIrrevocable,
         address admin,
         ICMTATConstructor.ERC20Attributes memory ERC20Attributes_,
-        ICMTATConstructor.BaseModuleAttributes memory baseModuleAttributes_,
+        ICMTATConstructor.ExtraInformationAttributes memory extraInformationModuleAttributes_,
         ICMTATConstructor.Engine memory engines_ 
-    ) CMTAT_STANDALONE(forwarderIrrevocable, admin, ERC20Attributes_, baseModuleAttributes_, engines_) {
+    ) CMTATStandalone(forwarderIrrevocable, admin, ERC20Attributes_, extraInformationModuleAttributes_, engines_) {
     }
 }

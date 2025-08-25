@@ -73,10 +73,6 @@ signature, etc.).
 Encode and decode method and event from the smart contract ABI. Warning:
 marked as experimental package on 22.08.2022.
 
-**[eth-gas-reporter](https://www.npmjs.com/package/eth-gas-reporter)**
-
-A Mocha reporter for Ethereum test suites (Truffle)
-
 **[solc](https://github.com/ethereum/solc-js)**
 JavaScript bindings for the Solidity compiler.
 
