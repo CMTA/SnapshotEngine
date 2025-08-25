@@ -22,8 +22,8 @@ contract CMTAT_STANDALONE_MOCK is CMTATStandalone {
         address forwarderIrrevocable,
         address admin,
         ICMTATConstructor.ERC20Attributes memory ERC20Attributes_,
-        ICMTATConstructor.BaseModuleAttributes memory baseModuleAttributes_,
+        ICMTATConstructor.ExtraInformationAttributes memory extraInformationModuleAttributes_,
         ICMTATConstructor.Engine memory engines_ 
-    ) CMTATStandalone(forwarderIrrevocable, admin, ERC20Attributes_, baseModuleAttributes_, engines_) {
+    ) CMTATStandalone(forwarderIrrevocable, admin, ERC20Attributes_, extraInformationModuleAttributes_, engines_) {
     }
 }

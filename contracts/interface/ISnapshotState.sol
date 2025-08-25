@@ -3,36 +3,48 @@
 pragma solidity ^0.8.20;
 
 /**
-* @notice minimum interface to represent a CMTAT with snapshot
-*/
+ * @title ISnapshotState
+ * @notice Minimal interface for a contract (e.g. SnapshotEngine or CMTAT) that supports querying historical balances and total supply using snapshots.
+ */
 interface ISnapshotState {
-    /** 
-    * @notice Return the number of tokens owned by the given owner at the time when the snapshot with the given time was created.
-    * @return value stored in the snapshot, or the actual balance if no snapshot
-    */
-    function snapshotBalanceOf(uint256 time,address owner) external view returns (uint256);
+ /**
+     * @notice Get the balance of a specific tokenHolder at the snapshot corresponding to a given timestamp.
+     * @param time The timestamp identifying the snapshot to query.
+     * @param tokenHolder The address whose balance is being requested.
+     * @return tokenHolderBalance The recorded balance at the snapshot, or the current balance if no snapshot exists for that timestamp.
+     */
+    function snapshotBalanceOf(uint256 time,address tokenHolder) external view returns (uint256 tokenHolderBalance);
+    
     /**
-    * @dev See {OpenZeppelin - ERC20Snapshot}
-    * Retrieves the total supply at the specified time.
-    * @return value stored in the snapshot, or the actual totalSupply if no snapshot
-    */
-    function snapshotTotalSupply(uint256 time) external view returns (uint256);
-    /**
-    * @notice Return snapshotBalanceOf and snapshotTotalSupply to avoid multiple calls
-    * @return ownerBalance ,  totalSupply - see snapshotBalanceOf and snapshotTotalSupply
-    */
-    function snapshotInfo(uint256 time, address owner) external view returns (uint256 ownerBalance, uint256 totalSupply);
-    /**
-    * @notice Return snapshotBalanceOf for each address in the array and the total supply
-    * @return ownerBalances array with the balance of each address, the total supply
-    */
-    function snapshotInfoBatch(uint256 time, address[] calldata addresses) external view returns (uint256[] memory ownerBalances, uint256 totalSupply);
+     * @notice Get the total token supply at the snapshot corresponding to a given timestamp.
+     * @param time The timestamp identifying the snapshot to query.
+     * @return totalSupply The recorded total supply at the snapshot, or the current total supply if no snapshot exists for that timestamp.
+     */
+    function snapshotTotalSupply(uint256 time) external view returns (uint256 totalSupply);
 
     /**
-    * @notice Return snapshotBalanceOf for each address in the array and the total supply
-    * @return ownerBalances array with the balance of each address, the total supply
-    */
-    function snapshotInfoBatch(uint256[] calldata times, address[] calldata addresses) external view returns (uint256[][] memory ownerBalances, uint256[] memory totalSupply);
+     * @notice Retrieve both an account's balance and the total supply at the snapshot for a given timestamp in a single call.
+     * @param time The timestamp identifying the snapshot to query.
+     * @param tokenHolder The address whose balance is being requested.
+     * @return tokenHolderBalance The recorded balance of the tokenHolder at the snapshot (or current balance if no snapshot).
+     * @return totalSupply The recorded total supply at the snapshot (or current total supply if no snapshot).
+     */
+    function snapshotInfo(uint256 time, address tokenHolder) external view returns (uint256 tokenHolderBalance, uint256 totalSupply);
+    /**
+     * @notice Retrieve the balances of multiple accounts and the total supply at the snapshot for a given timestamp in a single call.
+     * @param time The timestamp identifying the snapshot to query.
+     * @param addresses The array of addresses to query balances for.
+     * @return tokenHolderBalances An array containing each address's balance at the snapshot (or current balance if no snapshot).
+     * @return totalSupply The recorded total supply at the snapshot (or current total supply if no snapshot).
+     */
+    function snapshotInfoBatch(uint256 time, address[] calldata addresses) external view returns (uint256[] memory tokenHolderBalances, uint256 totalSupply);
 
-
+    /**
+     * @notice Retrieve balances of multiple accounts at multiple snapshots, as well as the total supply at each snapshot.
+     * @param times An array of timestamps identifying each snapshot to query.
+     * @param addresses The array of addresses to query balances for at each snapshot.
+     * @return tokenHolderBalances A 2D array where each row corresponds to the balances of all provided addresses at a given snapshot time.
+     * @return totalSupplies An array containing the total supply at each snapshot time (or current supply if no snapshot).
+     */
+    function snapshotInfoBatch(uint256[] calldata times, address[] calldata addresses) external view returns (uint256[][] memory tokenHolderBalances, uint256[] memory totalSupplies);
 }
