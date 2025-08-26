@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./SnapshotEngine.sol | a1644fb09898fec66875693aee1ab28c416d473e |
+| ./interface/ISnapshotScheduler.sol | 668fe4cff9b78f0a5332b3cee113ec1ebd0248e4 |
 
 
 ### Contracts Description Table
@@ -15,10 +15,12 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **SnapshotEngine** | Implementation | SnapshotState, SnapshotScheduler, VersionModule, ISnapshotEngine |||
-| └ | <Constructor> | Public ❗️ | 🛑  |NO❗️ |
-| └ | hasRole | Public ❗️ |   |NO❗️ |
-| └ | operateOnTransfer | Public ❗️ | 🛑  | onlyBoundToken |
+| **ISnapshotScheduler** | Interface |  |||
+| └ | scheduleSnapshot | External ❗️ | 🛑  |NO❗️ |
+| └ | scheduleSnapshotNotOptimized | External ❗️ | 🛑  |NO❗️ |
+| └ | rescheduleSnapshot | External ❗️ | 🛑  |NO❗️ |
+| └ | unscheduleLastSnapshot | External ❗️ | 🛑  |NO❗️ |
+| └ | unscheduleSnapshotNotOptimized | External ❗️ | 🛑  |NO❗️ |
 
 
 ### Legend

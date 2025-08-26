@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./SnapshotEngine.sol | a1644fb09898fec66875693aee1ab28c416d473e |
+| ./modules/SnapshotScheduler.sol | e3542e1c2eb220147e8adf2eefe1581aed1cc062 |
 
 
 ### Contracts Description Table
@@ -15,10 +15,12 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **SnapshotEngine** | Implementation | SnapshotState, SnapshotScheduler, VersionModule, ISnapshotEngine |||
-| └ | <Constructor> | Public ❗️ | 🛑  |NO❗️ |
-| └ | hasRole | Public ❗️ |   |NO❗️ |
-| └ | operateOnTransfer | Public ❗️ | 🛑  | onlyBoundToken |
+| **SnapshotScheduler** | Implementation | SnapshotBase, AccessControl, ISnapshotScheduler |||
+| └ | scheduleSnapshot | Public ❗️ | 🛑  | onlyRole |
+| └ | scheduleSnapshotNotOptimized | Public ❗️ | 🛑  | onlyRole |
+| └ | rescheduleSnapshot | Public ❗️ | 🛑  | onlyRole |
+| └ | unscheduleLastSnapshot | Public ❗️ | 🛑  | onlyRole |
+| └ | unscheduleSnapshotNotOptimized | Public ❗️ | 🛑  | onlyRole |
 
 
 ### Legend

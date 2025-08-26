@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./library/Errors.sol | 97ab9301f679e7d28d38ecd433eae34ce42c4439 |
+| ./library/Errors.sol | 924e3d607074bf45324146467b7086661b6641b7 |
 
 
 ### Contracts Description Table

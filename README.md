@@ -8,7 +8,7 @@ The **SnapshotEngine** is a contract to perform on-chain snapshot, useful to dis
 
 It is destined to be used with a standard ERC-20 contract (e.g CMTAT)
 
-If you want to use it inside another contract, e.g. to distribute dividends on-chain, you can get the state regarding the balance with the functions defined in the interface `ISnapshotState` defined in [./contracts/interface/ISnapshotState.sol](./contracts/interface/ISnapshotState.sol)
+If you want to use it inside another contract, e.g. to distribute dividends on-chain, you can get the state regarding the balance with the functions defined in the interface `ISnapshotState` defined in `ISnapshotState.sol`
 
 [TOC]
 
@@ -27,7 +27,7 @@ This interface can be found in [CMTAT/contracts/interfaces/engine](https://githu
 interface ISnapshotEngine {
    /**
     * @notice Records balance and total supply snapshots before any token transfer occurs.
-    * @dev This function should be called inside the {_beforeTokenTransfer} hook so that
+    * @dev This function should be called inside the {_update} hook so that
     * snapshots are updated prior to any state changes from {_mint}, {_burn}, or {_transfer}.
     * It ensures historical balances and total supply remain accurate for snapshot queries.
     *
@@ -45,6 +45,8 @@ During each ERC-20 transfer, before updating the balances and total supply, your
 
 ## Schema
 
+The main contract is `SnapshotEngine`
+
 ### Inheritance
 
 ![surya_inheritance_SnapshotEngine.sol](./doc/schema/surya_inheritance/surya_inheritance_SnapshotEngine.sol.png)
@@ -53,17 +55,13 @@ During each ERC-20 transfer, before updating the balances and total supply, your
 
 ### Graph
 
-#### SnapshotEngine
-
 ![surya_graph_SnapshotEngine.sol](./doc/schema/surya_graph/surya_graph_SnapshotEngine.sol.png)
 
 
 
-#### SnapshotBase
+### UML
 
-![surya_graph_SnapshotBase.sol](./doc/schema/surya_graph/surya_graph_SnapshotBase.sol.png)
-
-
+![SnapshotEngineUML](./doc/schema/UML/SnapshotEngineUML.png)
 
 
 
@@ -114,11 +112,28 @@ Here are several schema to explain the main functions
 
 ![SnpashotModule-Schema-unscheduleSnapshot.drawio](./doc/technical/schema/png/SnpashotModule-Schema-unscheduleSnapshot.drawio.png)
 
+## Access Control
+
+#### RBAC Role list
+
+Here is the list of roles and their 32 bytes identifier.
+
+|                    | Defined in                      | 32 bytes identifier                                          |
+| ------------------ | ------------------------------- | ------------------------------------------------------------ |
+| DEFAULT_ADMIN_ROLE | OpenZeppelin<br />AccessControl | 0x0000000000000000000000000000000000000000000000000000000000000000 |
+| SNAPSHOOTER_ROLE   | `SnapshotScheduler`             | 0x809a0fc49fc0600540f1d39e23454e1f6f215bc7505fa22b17c154616570ddef |
+
+### ERC-20 token bound
+
+The ERC-20 bounds to the Snapshot Engine is set at deployment and can not be changed after that.
+
+Only the ERC-20 token contract can called the function `operateOnTransfer` defined in the main contract `SnapshotEngine`.
+
 ## Ethereum API
 
-### ISnapshotBase
+### SnapshotBase
 
-Base interface for snapshot engines, providing common errors and read-only functions to query snapshots.
+Base contract for snapshot engines, providing common errors and read-only functions to query snapshots.
 
 ------
 
@@ -280,6 +295,10 @@ Get the next scheduled snapshots that have not yet been created.
 **Abstract contract for scheduling, rescheduling, and canceling snapshots.**
  Provides methods to manage snapshot times (expressed in seconds since epoch) with role-based access control via `SNAPSHOOTER_ROLE`.
 
+
+
+![SnapshotSchedulerUML](./doc/schema/UML/SnapshotSchedulerUML.png)
+
 ------
 
 #### Functions
@@ -398,6 +417,8 @@ Cancels the creation of a scheduled snapshot at the given time (non-optimized ve
 
 **Minimal interface for contracts (e.g. SnapshotEngine or CMTAT) supporting historical balance and total supply queries using snapshots.**
  Provides read-only methods to retrieve account balances and total token supply at specific timestamps, either individually or in batch.
+
+![SnapshotStateUML](./doc/schema/UML/SnapshotStateUML.png)
 
 ------
 
@@ -526,6 +547,12 @@ Retrieves balances of multiple accounts at multiple snapshots, as well as the to
 | ------------------- | ----------- | ------------------------------------------------------------ |
 | tokenHolderBalances | uint256[][] | 2D array where each row corresponds to the balances of all provided addresses at a given snapshot. |
 | totalSupplies       | uint256[]   | Array containing the total supply at each snapshot, or current supply if no snapshot exists. |
+
+### VersionModule
+
+![VersionModuleUML](./doc/schema/UML/VersionModuleUML.png)
+
+
 
 ## Storage management (ERC-7201)
 

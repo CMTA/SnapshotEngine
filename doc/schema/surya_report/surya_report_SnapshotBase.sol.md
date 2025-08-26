@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./library/SnapshotBase.sol | aa92ff8622060b9358957d78b1c5b240abf89247 |
+| ./library/SnapshotBase.sol | 385c02bea5486ba60c68b22a91cfce159824e31f |
 
 
 ### Contracts Description Table
@@ -15,7 +15,7 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **SnapshotBase** | Implementation |  |||
+| **SnapshotBase** | Implementation | ISnapshotBase |||
 | └ | getAllSnapshots | Public ❗️ |   |NO❗️ |
 | └ | getNextSnapshots | Public ❗️ |   |NO❗️ |
 | └ | _scheduleSnapshot | Internal 🔒 | 🛑  | |
@@ -23,19 +23,20 @@
 | └ | _rescheduleSnapshot | Internal 🔒 | 🛑  | |
 | └ | _unscheduleLastSnapshot | Internal 🔒 | 🛑  | |
 | └ | _unscheduleSnapshotNotOptimized | Internal 🔒 | 🛑  | |
-| └ | _valueAt | Internal 🔒 |   | |
-| └ | _updateSnapshot | Internal 🔒 | 🛑  | |
 | └ | _setCurrentSnapshot | Internal 🔒 | 🛑  | |
-| └ | _lastSnapshot | Private 🔐 |   | |
-| └ | _findScheduledSnapshotIndex | Private 🔐 |   | |
-| └ | _findScheduledMostRecentPastSnapshot | Private 🔐 |   | |
 | └ | _updateAccountSnapshot | Internal 🔒 | 🛑  | |
 | └ | _updateTotalSupplySnapshot | Internal 🔒 | 🛑  | |
 | └ | _snapshotBalanceOf | Internal 🔒 |   | |
 | └ | _snapshotTotalSupply | Internal 🔒 |   | |
+| └ | _updateSnapshot | Private 🔐 | 🛑  | |
+| └ | _valueAt | Private 🔐 |   | |
+| └ | _lastSnapshot | Private 🔐 |   | |
+| └ | _findScheduledSnapshotIndex | Private 🔐 |   | |
+| └ | _findScheduledMostRecentPastSnapshot | Private 🔐 |   | |
 | └ | _findAndRevertScheduledSnapshotIndex | Private 🔐 |   | |
-| └ | _checkTimeInThePast | Internal 🔒 |   | |
-| └ | _checkTimeSnapshotAlreadyDone | Internal 🔒 |   | |
+| └ | _checkTimeInThePast | Private 🔐 |   | |
+| └ | _checkTimeSnapshotAlreadyDone | Private 🔐 |   | |
+| └ | _getSnapshotBaseStorage | Private 🔐 |   | |
 
 
 ### Legend
