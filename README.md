@@ -4,19 +4,21 @@
 >
 > If you want to use this project, perform your own verification or send an email to [admin@cmta.ch](mailto:admin@cmta.ch).
 
-The **SnapshotEngine** is a contract to perform on-chain snapshot, useful to distribute dividends on-chain.
+The **SnapshotEngine** is a smart contract designed to perform on-chain snapshots, making it easier to distribute dividends or other token-based rewards directly on-chain.
 
-It is destined to be used with a standard ERC-20 contract (e.g CMTAT)
+It is intended to work with any standard ERC-20 token (for example, **CMTAT**).
 
-If you want to use it inside another contract, e.g. to distribute dividends on-chain, you can get the state regarding the balance with the functions defined in the interface `ISnapshotState` defined in `ISnapshotState.sol`
+If you want to integrate it into another contract—such as one for distributing dividends—you can access balance and state information through the `ISnapshotState` interface, defined in `ISnapshotState.sol`.
+
+The codebase is modular, allowing you to use or extend only the components you need. Thus, instead of using the `SnapshotEngine`as an external contract called by the ERC-20 token, you can integrate the relevant modules directly in the token smart contract. This repository provides an example with CMTAT, see `CMTAT deployment version`.
 
 [TOC]
 
 ### How to include it
 
-While it has been designed for the CMTAT, the snapshotEngine can be used with others ERC-20 contracts to perform on-chain snapshot
+While it has been designed for the CMTAT, the `SnapshotEngine` can be used with other ERC-20 contracts to perform on-chain snapshots.
 
-For that, the only thing to do is to import in your contract the interface `ISnapshotEngine` which declares the function `operateOnTransfer`
+To use it, import in your contract the interface `ISnapshotEngine` which declares the function `operateOnTransfer`.
 
 This interface can be found in [CMTAT/contracts/interfaces/engine](https://github.com/CMTA/CMTAT/tree/master/contracts/interfaces/engine)
 
@@ -42,6 +44,20 @@ interface ISnapshotEngine {
 ```
 
 During each ERC-20 transfer, before updating the balances and total supply, your contract must call the function `operateOnTransfer` which is the entrypoint for the SnapshotEngine.
+
+
+
+### CMTAT deployment version
+
+This repository also contains a CMTAT deployment version with the required snapshot modules integrated called `CMTATUpgradeableSnapshot`.
+
+The CMTAT features are included by inheriting from the CMTAT base contract `CMTATBaseRuleEngine` and overriding the internal `update` function (from OpenZeppelin’s ERC20) to call `_snapshotUpdate`. This internal function is responsible for updating balances and total supply whenever a snapshot is detected.
+
+For each ERC-20 transfer, the `_update` function is called, and a snapshot is taken if required. Since the snapshot logic is integrated directly into the token, there is no need for an external `SnapshotEngine` contract.
+
+![CMTATUpgradeableSnapshotUML](./doc/schema/UML/CMTATUpgradeableSnapshotUML.png)
+
+
 
 ## Schema
 

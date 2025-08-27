@@ -18,7 +18,15 @@ Please follow <https://changelog.md/> conventions.
   
   - Update changelog
 
-## 0.2.0
+
+
+## 0.3.0 - 2025-08-27
+
+- Add deployment version  with snapshot for CMTAT
+- Better code separation
+- Create new module ` SnapshotUpdateModule`
+
+## 0.2.0 - 2025-08-25
 
 - Dependencies
   - Update CMTAT to [v3.0.0-rc7](https://github.com/CMTA/CMTAT/releases/tag/v3.0.0-rc2)
@@ -30,6 +38,6 @@ Please follow <https://changelog.md/> conventions.
 
 - Use [ERC-7201](https://eips.ethereum.org/EIPS/eip-7201) for storage for compatibility with CMTAT
 
-## 0.1.0
+## 0.1.0 - 2025-08-19
 
 First release !

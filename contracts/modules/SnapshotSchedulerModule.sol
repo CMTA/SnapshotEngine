@@ -1,24 +1,19 @@
 //SPDX-License-Identifier: MPL-2.0
 
 pragma solidity ^0.8.20;
-/* ==== OpenZeppelin === */
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
+
 /* ==== Library === */
 import {SnapshotBase} from "../library/SnapshotBase.sol";
 import {ISnapshotScheduler} from "../interface/ISnapshotScheduler.sol";
-abstract contract SnapshotScheduler is SnapshotBase, AccessControl, ISnapshotScheduler {
-    /* ============ State Variables ============ */
-    bytes32 public constant SNAPSHOOTER_ROLE = keccak256("SNAPSHOOTER_ROLE");
-
+abstract contract SnapshotSchedulerModule is SnapshotBase, ISnapshotScheduler {
     /*//////////////////////////////////////////////////////////////
                             PUBLIC/EXTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
-
-
     /**
     * @inheritdoc ISnapshotScheduler
     */
-    function scheduleSnapshot(uint256 time) public onlyRole(SNAPSHOOTER_ROLE) {
+    function scheduleSnapshot(uint256 time) public virtual {
+         _authorizeSnapshot();
         SnapshotBase._scheduleSnapshot(time);
     }
 
@@ -27,7 +22,8 @@ abstract contract SnapshotScheduler is SnapshotBase, AccessControl, ISnapshotSch
     */
     function scheduleSnapshotNotOptimized(
         uint256 time
-    ) public onlyRole(SNAPSHOOTER_ROLE) {
+    ) public virtual {
+        _authorizeSnapshot();
         SnapshotBase._scheduleSnapshotNotOptimized(time);
     }
 
@@ -37,7 +33,8 @@ abstract contract SnapshotScheduler is SnapshotBase, AccessControl, ISnapshotSch
     function rescheduleSnapshot(
         uint256 oldTime,
         uint256 newTime
-    ) public onlyRole(SNAPSHOOTER_ROLE) {
+    ) public virtual {
+        _authorizeSnapshot();
         SnapshotBase._rescheduleSnapshot(oldTime, newTime);
     }
 
@@ -46,7 +43,8 @@ abstract contract SnapshotScheduler is SnapshotBase, AccessControl, ISnapshotSch
     */
     function unscheduleLastSnapshot(
         uint256 time
-    ) public onlyRole(SNAPSHOOTER_ROLE) {
+    ) public virtual {
+        _authorizeSnapshot();
         SnapshotBase._unscheduleLastSnapshot(time);
     }
 
@@ -55,7 +53,13 @@ abstract contract SnapshotScheduler is SnapshotBase, AccessControl, ISnapshotSch
     */
     function unscheduleSnapshotNotOptimized(
         uint256 time
-    ) public onlyRole(SNAPSHOOTER_ROLE) {
+    ) public virtual  {
+        _authorizeSnapshot();
         SnapshotBase._unscheduleSnapshotNotOptimized(time);
     }
+
+    /**
+    * @dev manage access control by overriding this function
+    */
+    function _authorizeSnapshot() internal virtual;
 }

@@ -4,16 +4,19 @@ pragma solidity ^0.8.20;
 
 /* ==== OpenZeppelin === */
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+/* ==== CMTAT === */
+import {ISnapshotEngine} from "../CMTAT/contracts/interfaces/engine/ISnapshotEngine.sol";
 /* ==== Modules === */
-import {SnapshotScheduler} from "./modules/SnapshotScheduler.sol";
-import {SnapshotState} from "./modules/SnapshotState.sol";
+import {SnapshotSchedulerModule} from "./modules/SnapshotSchedulerModule.sol";
+import {SnapshotUpdateModule} from "./modules/SnapshotUpdateModule.sol";
+import {SnapshotStateModule} from "./modules/SnapshotStateModule.sol";
 import {VersionModule} from "./modules/VersionModule.sol";
 /* ==== Interfaces and library === */
-import {SnapshotBase} from "./library/SnapshotBase.sol";
-import {ISnapshotEngine} from "../CMTAT/contracts/interfaces/engine/ISnapshotEngine.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Errors} from "./library/Errors.sol";
-contract SnapshotEngine is SnapshotState, SnapshotScheduler, VersionModule, ISnapshotEngine {
+contract SnapshotEngine is SnapshotStateModule, SnapshotUpdateModule, SnapshotSchedulerModule, VersionModule, AccessControl, ISnapshotEngine {
+    /* ============ State Variables ============ */
+    bytes32 public constant SNAPSHOOTER_ROLE = keccak256("SNAPSHOOTER_ROLE");
     /* ==== Modifier === */
     modifier onlyBoundToken() {
         if (_msgSender() != address(erc20)) {
@@ -43,8 +46,9 @@ contract SnapshotEngine is SnapshotState, SnapshotScheduler, VersionModule, ISna
         // The Default Admin has all roles
         if (AccessControl.hasRole(DEFAULT_ADMIN_ROLE, account)) {
             return true;
+        } else {
+            return AccessControl.hasRole(role, account);
         }
-        return AccessControl.hasRole(role, account);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -54,21 +58,11 @@ contract SnapshotEngine is SnapshotState, SnapshotScheduler, VersionModule, ISna
     * @inheritdoc ISnapshotEngine
     */
    function operateOnTransfer(address from, address to, uint256 balanceFrom, uint256 balanceTo, uint256 totalSupply) public override onlyBoundToken() {
-        SnapshotBase._setCurrentSnapshot();
-        if (from != address(0)) {
-            // for both burn and transfer
-            SnapshotBase._updateAccountSnapshot(from, balanceFrom);
-            if (to != address(0)) {
-                // transfer
-                SnapshotBase._updateAccountSnapshot(to, balanceTo);
-            } else {
-                // burn
-                SnapshotBase._updateTotalSupplySnapshot(totalSupply);
-            }
-        } else {
-            // mint
-            SnapshotBase._updateAccountSnapshot(to, balanceTo);
-            SnapshotBase._updateTotalSupplySnapshot(totalSupply);
-        }
+         _snapshotUpdate(from, to, balanceFrom, balanceTo, totalSupply);
     }
+
+
+     function _authorizeSnapshot() internal virtual override onlyRole(SNAPSHOOTER_ROLE){
+        // Nothing to do
+     }
 }

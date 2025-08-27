@@ -5,6 +5,7 @@ require("solidity-coverage")
 require('solidity-docgen')
 require("hardhat-contract-sizer");
 require("@nomicfoundation/hardhat-chai-matchers")
+require('@openzeppelin/hardhat-upgrades')
 module.exports = {
   solidity: {
     version: '0.8.30',

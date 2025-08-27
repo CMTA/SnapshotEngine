@@ -37,7 +37,7 @@ describe('Deploy Snapshot Engine', function () {
     it('testHasTheRightVersion', async function () {
       this.transferEngineMock = await ethers.deployContract('SnapshotEngine', [
         this.cmtat.target, this.admin])
-      expect(await this.transferEngineMock.version()).to.equal("0.2.0")
+      expect(await this.transferEngineMock.version()).to.equal("0.3.0")
     })
 
     it('testCannotDeployIfERC20IsZero', async function () {

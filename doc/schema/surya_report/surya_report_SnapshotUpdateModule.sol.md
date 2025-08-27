@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./modules/SnapshotState.sol | ea59dc723d64b4bf02b0ba0dfea4f9ace1856c59 |
+| ./modules/SnapshotUpdateModule.sol | b0e4e770bcbed62cc0c493233e24f92a90300772 |
 
 
 ### Contracts Description Table
@@ -15,12 +15,8 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **SnapshotState** | Implementation | SnapshotStateInternal, ISnapshotState |||
-| └ | snapshotInfo | Public ❗️ |   |NO❗️ |
-| └ | snapshotInfoBatch | Public ❗️ |   |NO❗️ |
-| └ | snapshotInfoBatch | Public ❗️ |   |NO❗️ |
-| └ | snapshotBalanceOf | Public ❗️ |   |NO❗️ |
-| └ | snapshotTotalSupply | Public ❗️ |   |NO❗️ |
+| **SnapshotUpdateModule** | Implementation | SnapshotBase |||
+| └ | _snapshotUpdate | Internal 🔒 | 🛑  | |
 
 
 ### Legend

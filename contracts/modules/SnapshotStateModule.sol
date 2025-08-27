@@ -8,7 +8,7 @@ import {SnapshotStateInternal} from "../library/SnapshotStateInternal.sol";
 import {ISnapshotState} from "../interface/ISnapshotState.sol";
 
 
-abstract contract SnapshotState is SnapshotStateInternal, ISnapshotState  {
+abstract contract SnapshotStateModule is SnapshotStateInternal, ISnapshotState  {
     IERC20 internal immutable erc20;
 
     /*//////////////////////////////////////////////////////////////

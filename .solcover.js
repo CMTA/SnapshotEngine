@@ -1,3 +1,3 @@
 module.exports = {
-    skipFiles: ['openzeppelin-contracts-upgradeable', 'mocks', '*/test/*']
+    skipFiles: ['openzeppelin-contracts-upgradeable', 'mocks', 'mock', '*/test/*']
 };
