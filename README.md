@@ -621,7 +621,7 @@ are the latest ones that we tested:
 
   - Solidity [v0.8.30](https://docs.soliditylang.org/en/v0.8.30/)
 
-  - CMTAT [v3.0.0-rc7](https://github.com/CMTA/CMTAT/releases/tag/v3.0.0-rc7)
+  - CMTAT [v3.0.0](https://github.com/CMTA/CMTAT/releases/tag/v3.0.0)
 
   - OpenZeppelin
 
