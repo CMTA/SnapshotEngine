@@ -83,6 +83,36 @@ The main contract is `SnapshotEngine`
 
 ## Technical
 
+As recommended by [ABDK](https://abdk.consulting) for the audit on [CMTAT v1.0.0](https://github.com/CMTA/CMTAT/blob/v3.0.0/doc/audits/ABDK-CMTAT-audit-20210910/ABDK-CMTAT-audit-20210910.pdf) (2021), we use an ordered array of scheduled snapshots and we don't remove already created (past) snapshots.
+
+> We recommend using an ordered array of scheduled snapshots and don’t
+> remove already created snapshots from it, so the snapshot ID is the index in this array. 
+>
+> - When snapshot is scheduled, its time should be greater that the currency block timestamp and
+>   shouldn’t be less than time of the latest scheduled snapshot (if any). 
+>
+> - When snapshot is rescheduled, its new scheduled time shouldn’t be less than the time of the previous scheduled
+>   snapshot (if any) and shouldn’t be greater than the time of the next scheduled snapshot (if
+>   any).
+>
+> - Only the latest scheduled snapshot could be unscheduled. 
+>
+>   Such approach would make it possible to use binary search to find the current snapshot index. It also would make the
+>   snapshot ID known when snapshot is just scheduled, and would make it possible to know on-
+>   chain the scheduled times of already created snapshots. 
+>   It would also allow scheduling several snapshots at the same time (note: we don't allow that) and usint snapshot IDs instead of times to identify the scheduled snapshots.
+
+Initially, we use an unordered list of snapshots, but this has a lot of disadvantage as pointed by ABDK
+
+> Using an unordered list of scheduled snapshots and removing already created
+> snapshots from it is suboptimal and have several important drawbacks: 
+>
+> - The ID of ascheduled snapshot is unknown before the snapshot is currently created. This limits possibilities
+>   of scheduling snapshots from smart contracts. 
+> - Schedule times for already created snapshots
+>   are not available on-chain. 
+> - Each transfer requires to read  the entire snapshot array, which is a significant overhead
+
 ### Complexity
 
 | Name                                                         | Function                               | Description                                                  | Implemented [yes, no] | Complexity                                                   | Best case | Worst case  |

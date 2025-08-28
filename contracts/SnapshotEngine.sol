@@ -62,7 +62,7 @@ contract SnapshotEngine is SnapshotStateModule, SnapshotUpdateModule, SnapshotSc
     }
 
 
-     function _authorizeSnapshot() internal virtual override onlyRole(SNAPSHOOTER_ROLE){
+    function _authorizeSnapshot() internal virtual override onlyRole(SNAPSHOOTER_ROLE){
         // Nothing to do
      }
 }
