@@ -14,6 +14,18 @@ The codebase is modular, allowing you to use or extend only the components you n
 
 [TOC]
 
+### When to use it
+
+Incident recovery: prefer **pinned balanceOf** reads instead of the snapshot engine
+
+In outages/reorgs, the simplest and most accurate recovery is `eth_call` to `balanceOf(address)` at a pinned, finalized block. That gives exact balances at the last healthy point even if new blocks aren’t produced. 
+
+In short:
+
+- Snapshots are best for on-chain logic at a record date (airdrops/dividends, voting, escrows). 
+
+- Pinned balanceOf at a block is best for off-chain recovery, reporting, or building a Merkle list.
+
 ### How to include it
 
 While it has been designed for the CMTAT, the `SnapshotEngine` can be used with other ERC-20 contracts to perform on-chain snapshots.
