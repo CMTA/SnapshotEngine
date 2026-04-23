@@ -2,8 +2,6 @@
 
 pragma solidity ^0.8.20;
 
-/* ==== OpenZeppelin === */
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 /* ==== CMTAT === */
 import {ISnapshotEngine} from "../../CMTAT/contracts/interfaces/engine/ISnapshotEngine.sol";
 /* ==== Modules === */
@@ -12,6 +10,7 @@ import {SnapshotUpdateModule} from "../modules/SnapshotUpdateModule.sol";
 import {SnapshotStateModule} from "../modules/SnapshotStateModule.sol";
 import {VersionModule} from "../modules/VersionModule.sol";
 /* ==== Interfaces and library === */
+import {IERC20SnapshotCompatible} from "../interface/IERC20SnapshotCompatible.sol";
 import {Errors} from "../library/Errors.sol";
 
 abstract contract SnapshotEngineBase is SnapshotStateModule, SnapshotUpdateModule, SnapshotSchedulerModule, VersionModule, ISnapshotEngine {
@@ -23,7 +22,7 @@ abstract contract SnapshotEngineBase is SnapshotStateModule, SnapshotUpdateModul
         _;
     }
 
-    constructor(IERC20 erc20_) {
+    constructor(IERC20SnapshotCompatible erc20_) {
         require(address(erc20_) != address(0), Errors.SnapshotEngine_AddressZeroNotAllowedForERC20());
         erc20 = erc20_;
     }

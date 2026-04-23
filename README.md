@@ -42,6 +42,13 @@ In short:
 
 While it has been designed for the CMTAT, the `SnapshotEngine` can be used with other ERC-20 contracts to perform on-chain snapshots.
 
+For `SnapshotEngine` deployment, the bound token only needs to expose:
+
+- `balanceOf(address)`
+- `totalSupply()`
+
+This minimal requirement is captured by `IERC20SnapshotCompatible` in `contracts/interface/IERC20SnapshotCompatible.sol`.
+
 To use it, import in your contract the interface `ISnapshotEngine` which declares the function `operateOnTransfer`.
 
 This interface can be found in [CMTAT/contracts/interfaces/engine](https://github.com/CMTA/CMTAT/tree/master/contracts/interfaces/engine)

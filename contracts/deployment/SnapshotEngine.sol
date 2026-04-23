@@ -4,10 +4,10 @@ pragma solidity ^0.8.20;
 
 /* ==== OpenZeppelin === */
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 /* ==== Deployment === */
 import {SnapshotEngineBase} from "../base/SnapshotEngineBase.sol";
 /* ==== Interfaces and library === */
+import {IERC20SnapshotCompatible} from "../interface/IERC20SnapshotCompatible.sol";
 import {Errors} from "../library/Errors.sol";
 
 contract SnapshotEngine is SnapshotEngineBase, AccessControl {
@@ -15,7 +15,7 @@ contract SnapshotEngine is SnapshotEngineBase, AccessControl {
     bytes32 public constant SNAPSHOOTER_ROLE = keccak256("SNAPSHOOTER_ROLE");
 
     /* ============ Constructor ============ */
-    constructor(IERC20 erc20_, address admin) SnapshotEngineBase(erc20_) {
+    constructor(IERC20SnapshotCompatible erc20_, address admin) SnapshotEngineBase(erc20_) {
         require(admin != address(0), Errors.SnapshotEngine_AddressZeroNotAllowedForAdmin());
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
     }

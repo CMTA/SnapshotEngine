@@ -1,15 +1,14 @@
 //SPDX-License-Identifier: MPL-2.0
 
 pragma solidity ^0.8.20;
-/* ==== OpenZeppelin === */
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 /* ==== Interfaces and library === */
+import {IERC20SnapshotCompatible} from "../interface/IERC20SnapshotCompatible.sol";
 import {SnapshotStateInternal} from "../library/SnapshotStateInternal.sol";
 import {ISnapshotState} from "../interface/ISnapshotState.sol";
 
 
 abstract contract SnapshotStateModule is SnapshotStateInternal, ISnapshotState  {
-    IERC20 internal immutable erc20;
+    IERC20SnapshotCompatible internal immutable erc20;
 
     /*//////////////////////////////////////////////////////////////
                             PUBLIC/EXTERNAL FUNCTIONS

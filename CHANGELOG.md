@@ -50,6 +50,7 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
   - Update `CMTATBaseRuleEngine` import path (`1_CMTATBaseRuleEngine.sol` -> `2_CMTATBaseRuleEngine.sol`).
   - Update version interface usage from `IERC3643Base` to `IERC3643Version`.
   - Update OpenZeppelin dependencies to `@openzeppelin/contracts` and `@openzeppelin/contracts-upgradeable` `5.6.1`.
+  - Replace full `IERC20` dependency in SnapshotEngine modules with a minimal `IERC20SnapshotCompatible` interface (`balanceOf`, `totalSupply`).
 
 - Documentation
   - Clarify and document the `0.3.0` known issue and `0.4.0` resolution for `getNextSnapshots()` arithmetic underflow when no future snapshots remain.
@@ -62,6 +63,7 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
     - `poke()` can be used by authorized accounts to materialize due snapshots without requiring token transfers.
   - Add a second deployment variant using OpenZeppelin `Ownable2Step` (`SnapshotEngineOwnable2Step`) and refactor shared deployment logic into `SnapshotEngineBase` to minimize duplication.
   - Add `CMTATStandaloneSnapshot` (standalone/non-proxy deployment) and refactor shared CMTAT+snapshot behavior into `CMTATSnapshotBase` to minimize duplication with `CMTATUpgradeableSnapshot`.
+  - Update README integration guidance to document the minimal token interface required by SnapshotEngine (`IERC20SnapshotCompatible`).
 
 - Testing
   - Add tests for exact snapshot queries (scheduled vs non-scheduled timestamps and parity with legacy queries on scheduled timestamps).

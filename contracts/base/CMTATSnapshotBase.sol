@@ -2,8 +2,6 @@
 
 pragma solidity ^0.8.20;
 
-/* ==== OpenZeppelin === */
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 /* ==== Modules === */
 import {SnapshotSchedulerModule} from "../modules/SnapshotSchedulerModule.sol";
 import {SnapshotUpdateModule} from "../modules/SnapshotUpdateModule.sol";
@@ -11,6 +9,7 @@ import {SnapshotUpdateModule} from "../modules/SnapshotUpdateModule.sol";
 import {CMTATBaseCommon} from "../../CMTAT/contracts/modules/0_CMTATBaseCommon.sol";
 import {CMTATBaseRuleEngine} from "../../CMTAT/contracts/modules/2_CMTATBaseRuleEngine.sol";
 /* ==== Interfaces and library === */
+import {IERC20SnapshotCompatible} from "../interface/IERC20SnapshotCompatible.sol";
 import {ISnapshotState} from "../interface/ISnapshotState.sol";
 import {SnapshotStateInternal} from "../library/SnapshotStateInternal.sol";
 
@@ -35,21 +34,21 @@ abstract contract CMTATSnapshotBase is
     * @inheritdoc ISnapshotState
     */
     function snapshotInfo(uint256 time, address tokenHolder) public view virtual override(ISnapshotState) returns (uint256 tokenHolderBalance, uint256 totalSupply) {
-        (tokenHolderBalance, totalSupply) = _snapshotInfo(IERC20(address(this)), time, tokenHolder);
+        (tokenHolderBalance, totalSupply) = _snapshotInfo(IERC20SnapshotCompatible(address(this)), time, tokenHolder);
     }
 
     /**
     * @inheritdoc ISnapshotState
     */
     function snapshotInfoBatch(uint256 time, address[] calldata addresses) public view virtual override(ISnapshotState) returns (uint256[] memory tokenHolderBalances, uint256 totalSupply) {
-        (tokenHolderBalances, totalSupply) = _snapshotInfoBatch(IERC20(address(this)), time, addresses);
+        (tokenHolderBalances, totalSupply) = _snapshotInfoBatch(IERC20SnapshotCompatible(address(this)), time, addresses);
     }
 
     /**
     * @inheritdoc ISnapshotState
     */
     function snapshotInfoBatch(uint256[] calldata times, address[] calldata addresses) public view virtual override(ISnapshotState) returns (uint256[][] memory tokenHolderBalances, uint256[] memory totalSupply) {
-        (tokenHolderBalances, totalSupply) = _snapshotInfoBatch(IERC20(address(this)), times, addresses);
+        (tokenHolderBalances, totalSupply) = _snapshotInfoBatch(IERC20SnapshotCompatible(address(this)), times, addresses);
     }
 
     /**
@@ -59,7 +58,7 @@ abstract contract CMTATSnapshotBase is
         uint256 time,
         address tokenHolder
     ) public view virtual override(ISnapshotState) returns (uint256) {
-        return _snapshotBalanceOf(IERC20(address(this)), time, tokenHolder);
+        return _snapshotBalanceOf(IERC20SnapshotCompatible(address(this)), time, tokenHolder);
     }
 
     /**
@@ -69,21 +68,21 @@ abstract contract CMTATSnapshotBase is
         uint256 time,
         address tokenHolder
     ) public view virtual override(ISnapshotState) returns (uint256) {
-        return _snapshotBalanceOfExact(IERC20(address(this)), time, tokenHolder);
+        return _snapshotBalanceOfExact(IERC20SnapshotCompatible(address(this)), time, tokenHolder);
     }
 
     /**
     * @inheritdoc ISnapshotState
     */
     function snapshotTotalSupply(uint256 time) public view virtual override(ISnapshotState) returns (uint256 totalSupply) {
-        return _snapshotTotalSupply(IERC20(address(this)), time);
+        return _snapshotTotalSupply(IERC20SnapshotCompatible(address(this)), time);
     }
 
     /**
     * @inheritdoc ISnapshotState
     */
     function snapshotTotalSupplyExact(uint256 time) public view virtual override(ISnapshotState) returns (uint256 totalSupply) {
-        return _snapshotTotalSupplyExact(IERC20(address(this)), time);
+        return _snapshotTotalSupplyExact(IERC20SnapshotCompatible(address(this)), time);
     }
 
     /*//////////////////////////////////////////////////////////////
