@@ -13,31 +13,34 @@ describe('Deploy Snapshot Engine', function () {
       this.admin.address,
       this.deployerAddress.address
     )
-    this.transferEngineCustomError = await ethers.deployContract('SnapshotEngine', [
-    this.cmtat.target, this.admin])
-    this.cmtat.connect(this.admin).setSnapshotEngine(this.transferEngineMock)
+    this.transferEngineCustomError = await ethers.deployContract(
+      'SnapshotEngine',
+      [this.cmtat.target, this.admin]
+    )
+    await this.cmtat.connect(this.admin).setSnapshotEngine(this.transferEngineCustomError)
   })
-  
 
   context('Access Control', function () {
     it('testCannotTransferIfNotTokenBound', async function () {
       // Act
       this.transferEngineMock = await ethers.deployContract('SnapshotEngine', [
-      this.cmtat.target, this.admin])
+        this.cmtat.target, this.admin
+      ])
       await expect(
-        this.transferEngineMock.operateOnTransfer(this.admin, this.admin, 1,1,1)
-        ).to.be.revertedWithCustomError(
-          this.transferEngineCustomError,
-          'SnapshotEngine_UnauthorizedCaller'
-        )
+        this.transferEngineMock.operateOnTransfer(this.admin, this.admin, 1, 1, 1)
+      ).to.be.revertedWithCustomError(
+        this.transferEngineCustomError,
+        'SnapshotEngine_UnauthorizedCaller'
+      )
     })
   })
 
   context('SnapshotEngineDeployment', function () {
     it('testHasTheRightVersion', async function () {
       this.transferEngineMock = await ethers.deployContract('SnapshotEngine', [
-        this.cmtat.target, this.admin])
-      expect(await this.transferEngineMock.version()).to.equal("0.3.0")
+        this.cmtat.target, this.admin
+      ])
+      expect(await this.transferEngineMock.version()).to.equal('0.3.0')
     })
 
     it('testCannotDeployIfERC20IsZero', async function () {

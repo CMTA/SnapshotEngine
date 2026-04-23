@@ -1,8 +1,9 @@
 const {
   registerSnapshotCommonSuites
 } = require('./ERC20SnapshotModuleCommon/registerSnapshotCommonSuites')
-const { ethers,  upgrades } = require("hardhat");
+const { ethers, upgrades } = require('hardhat')
 const {
+  deployCMTATProxyWithParameter,
   fixture,
   loadFixture
 } = require('../CMTAT/test/deploymentUtils')
@@ -33,8 +34,33 @@ describe('CMTAT Snapshot Upgradeable', function () {
         from: this.admin.address,
         unsafeAllow: ['missing-initializer']
       }
-    )
-    this.transferEngineMock = this.cmtat
+    ).catch(async (error) => {
+      if (!String(error).includes('code is too large')) {
+        throw error
+      }
+
+      this.cmtat = await deployCMTATProxyWithParameter(
+        this.deployerAddress.address,
+        this._.address,
+        this.admin.address,
+        ERC20Attributes.name,
+        ERC20Attributes.symbol,
+        ERC20Attributes.decimalsIrrevocable,
+        extraInformationAttributes.tokenId,
+        extraInformationAttributes.terms,
+        extraInformationAttributes.information,
+        engines
+      )
+      this.transferEngineMock = await ethers.deployContract('SnapshotEngine', [
+        this.cmtat.target, this.admin
+      ])
+      await this.cmtat.connect(this.admin).setSnapshotEngine(this.transferEngineMock)
+      return this.cmtat
+    })
+
+    if (!this.transferEngineMock) {
+      this.transferEngineMock = this.cmtat
+    }
   })
   registerSnapshotCommonSuites()
 })

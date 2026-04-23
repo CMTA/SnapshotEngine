@@ -15,9 +15,10 @@ describe('Standard - ERC20SnapshotModule', function () {
       this.admin.address,
       this.deployerAddress.address
     )
-   this.transferEngineMock = await ethers.deployContract('SnapshotEngine', [
-    this.cmtat.target, this.admin])
-    this.cmtat.connect(this.admin).setSnapshotEngine(this.transferEngineMock)
+    this.transferEngineMock = await ethers.deployContract('SnapshotEngine', [
+      this.cmtat.target, this.admin
+    ])
+    await this.cmtat.connect(this.admin).setSnapshotEngine(this.transferEngineMock)
   })
   registerSnapshotCommonSuites()
 })

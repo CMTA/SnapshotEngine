@@ -19,7 +19,7 @@ describe('Standard - ERC20SnapshotModule Ownable2Step', function () {
     this.transferEngineMock = await ethers.deployContract('SnapshotEngineOwnable2Step', [
       this.cmtat.target, this.admin
     ])
-    this.cmtat.connect(this.admin).setSnapshotEngine(this.transferEngineMock)
+    await this.cmtat.connect(this.admin).setSnapshotEngine(this.transferEngineMock)
   })
 
   registerSnapshotCommonSuites()

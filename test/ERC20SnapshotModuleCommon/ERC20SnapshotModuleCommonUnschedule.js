@@ -96,7 +96,7 @@ function ERC20SnapshotModuleCommonUnschedule () {
       checkArraySnapshot(snapshots, [
         this.snapshotTime1,
         this.snapshotTime2,
-        this.RANDOM_SNAPSHOT,
+        RANDOM_SNAPSHOT,
         this.snapshotTime3,
         this.snapshotTime4,
         this.snapshotTime5

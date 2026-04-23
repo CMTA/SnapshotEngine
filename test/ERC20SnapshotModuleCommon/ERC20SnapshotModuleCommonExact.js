@@ -5,8 +5,9 @@ function ERC20SnapshotModuleCommonExact () {
   context('Exact snapshot queries', function () {
     beforeEach(async function () {
       this.currentTime = await time.latest()
-      this.snapshotTime = this.currentTime + time.duration.seconds(3)
-      this.nonScheduledTime = this.currentTime + time.duration.seconds(4)
+      // Keep enough margin to avoid same-block "scheduled in the past" edge cases.
+      this.snapshotTime = this.currentTime + time.duration.seconds(30)
+      this.nonScheduledTime = this.currentTime + time.duration.seconds(31)
     })
 
     it('snapshotExists returns true only for exact scheduled times', async function () {
