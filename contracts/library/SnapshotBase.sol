@@ -428,7 +428,7 @@ abstract contract SnapshotBase is ISnapshotBase {
         // no snapshot or the current snapshot already points on the last snapshot
         if (
             currentArraySize == 0 ||
-            (($._currentSnapshotIndex + 1 == currentArraySize) && (time != 0))
+            (($._currentSnapshotIndex + 1 == currentArraySize) && ($._currentSnapshotTime != 0))
         ) {
             return (0, currentArraySize);
         }
