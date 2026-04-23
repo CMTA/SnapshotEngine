@@ -4,13 +4,25 @@
 >
 > If you want to use this project, perform your own verification or send an email to [admin@cmta.ch](mailto:admin@cmta.ch).
 
-The **SnapshotEngine** is a smart contract designed to perform on-chain snapshots, making it easier to distribute dividends or other token-based rewards directly on-chain.
+The **SnapshotEngine** is a smart contract system designed to perform on-chain snapshots, making it easier to distribute dividends or other token-based rewards directly on-chain.
 
 It is intended to work with any standard ERC-20 token (for example, **CMTAT**).
 
 If you want to integrate it into another contract—such as one for distributing dividends—you can access balance and state information through the `ISnapshotState` interface, defined in `ISnapshotState.sol`.
 
-The codebase is modular, allowing you to use or extend only the components you need. Thus, instead of using the `SnapshotEngine`as an external contract called by the ERC-20 token, you can integrate the relevant modules directly in the token smart contract. This repository provides an example with CMTAT, see `CMTAT deployment version`.
+The codebase is modular, allowing you to use or extend only the components you need. Thus, instead of using the `SnapshotEngine` as an external contract called by the ERC-20 token, you can integrate the relevant modules directly in the token smart contract. This repository provides examples with CMTAT (upgradeable and standalone variants), see `CMTAT deployment version`.
+
+## Repository Notes
+
+- `CMTAT/` is a git submodule and should be treated as external code.
+- Local changes in this repository should not modify code inside the `CMTAT/` submodule.
+
+## Deployment Variants
+
+- `SnapshotEngine` (`contracts/deployment/SnapshotEngine.sol`): external engine with AccessControl (`SNAPSHOOTER_ROLE`).
+- `SnapshotEngineOwnable2Step` (`contracts/deployment/SnapshotEngineOwnable2Step.sol`): external engine with Ownable2Step authorization.
+- `CMTATUpgradeableSnapshot` (`contracts/deployment/CMTATUpgradeableSnapshot.sol`): snapshot logic integrated in CMTAT upgradeable deployment.
+- `CMTATStandaloneSnapshot` (`contracts/deployment/CMTATStandaloneSnapshot.sol`): snapshot logic integrated in CMTAT standalone deployment.
 
 [TOC]
 
@@ -61,11 +73,14 @@ During each ERC-20 transfer, before updating the balances and total supply, your
 
 ### CMTAT deployment version
 
-This repository also contains a CMTAT deployment version with the required snapshot modules integrated called `CMTATUpgradeableSnapshot`.
+This repository also contains CMTAT deployment versions with the required snapshot modules integrated:
+
+- `CMTATUpgradeableSnapshot` for proxy deployment.
+- `CMTATStandaloneSnapshot` for non-proxy deployment (initialized through constructor).
 
 The CMTAT features are included by inheriting from the CMTAT base contract `CMTATBaseRuleEngine` and overriding the internal `update` function (from OpenZeppelin’s ERC20) to call `_snapshotUpdate`. This internal function is responsible for updating balances and total supply whenever a snapshot is detected.
 
-For each ERC-20 transfer, the `_update` function is called, and a snapshot is taken if required. Since the snapshot logic is integrated directly into the token, there is no need for an external `SnapshotEngine` contract.
+For each ERC-20 transfer, the `_update` function is called, and a snapshot is materialized when required. Since the snapshot logic is integrated directly into the token, there is no need for an external `SnapshotEngine` contract.
 
 ![CMTATUpgradeableSnapshotUML](./doc/schema/UML/CMTATUpgradeableSnapshotUML.png)
 
@@ -171,6 +186,13 @@ Here are several schema to explain the main functions
 ![SnpashotModule-Schema-unscheduleSnapshot.drawio](./doc/technical/schema/png/SnpashotModule-Schema-unscheduleSnapshot.drawio.png)
 
 ## Access Control
+
+Two authorization models are available depending on deployment:
+
+- `SnapshotEngine`: role-based access control via `SNAPSHOOTER_ROLE`.
+- `SnapshotEngineOwnable2Step`: owner-only access via `onlyOwner`.
+
+Integrated CMTAT snapshot deployments use CMTAT role-based access control for snapshot scheduling functions.
 
 #### RBAC Role list
 
@@ -361,11 +383,27 @@ Get the next scheduled snapshots that have not yet been created.
 
 #### Functions
 
+##### poke()
+
+```solidity
+function poke() public
+```
+
+Materializes the latest eligible scheduled snapshot (if any), without requiring an ERC-20 transfer.
+
+**Details:**
+
+- Useful when no transfer/mint/burn occurs around a scheduled record date.
+- Access is restricted by deployment mode:
+`SNAPSHOOTER_ROLE` for `SnapshotEngine`, `onlyOwner` for `SnapshotEngineOwnable2Step`.
+
+------
+
 ##### scheduleSnapshot(uint256)
 
 ```solidity
 function scheduleSnapshot(uint256 time) 
-public onlyRole(SNAPSHOOTER_ROLE)
+public
 ```
 
 Schedules a snapshot at the given time (in seconds since epoch).
@@ -387,7 +425,7 @@ Schedules a snapshot at the given time (in seconds since epoch).
 
 ```solidity
 function scheduleSnapshotNotOptimized(uint256 time) 
-public onlyRole(SNAPSHOOTER_ROLE)
+public
 ```
 
 Schedules a snapshot at the given time (non-optimized version).
@@ -409,7 +447,7 @@ Schedules a snapshot at the given time (non-optimized version).
 
 ```solidity
 function rescheduleSnapshot(uint256 oldTime,uint256 newTime) 
-public onlyRole(SNAPSHOOTER_ROLE)
+public
 ```
 
 Reschedules a snapshot from `oldTime` to `newTime`.
@@ -432,7 +470,7 @@ Reschedules a snapshot from `oldTime` to `newTime`.
 
 ```solidity
 function unscheduleLastSnapshot(uint256 time) 
-public onlyRole(SNAPSHOOTER_ROLE)
+public
 ```
 
 Cancels the creation of the last scheduled snapshot at the given time.
@@ -454,7 +492,7 @@ Cancels the creation of the last scheduled snapshot at the given time.
 
 ```solidity
 function unscheduleSnapshotNotOptimized(uint256 time) 
-public onlyRole(SNAPSHOOTER_ROLE)
+public
 ```
 
 Cancels the creation of a scheduled snapshot at the given time (non-optimized version).
@@ -486,7 +524,7 @@ Cancels the creation of a scheduled snapshot at the given time (non-optimized ve
 
 ```solidity
 function snapshotBalanceOf(uint256 time,address tokenHolder) 
-external view returns (uint256 tokenHolderBalance);
+public view returns (uint256 tokenHolderBalance);
 ```
 
 Gets the balance of a specific account at the snapshot corresponding to a given timestamp.
@@ -506,12 +544,26 @@ Gets the balance of a specific account at the snapshot corresponding to a given 
 
 ------
 
+##### snapshotBalanceOfExact(uint256, address) -> (uint256)
+
+```solidity
+function snapshotBalanceOfExact(uint256 time, address tokenHolder)
+public view returns (uint256 tokenHolderBalance);
+```
+
+Gets the balance at an exact scheduled snapshot timestamp.
+
+**Details:**
+
+- Reverts with `SnapshotEngine_SnapshotNotFound` if `time` is not an exact scheduled snapshot.
+
+------
+
 ##### snapshotTotalSupply(uint256) ->  (uint256)
 
 ```solidity
 function snapshotTotalSupply(uint256 time) 
-public view override(ISnapshotState) 
-returns (uint256 totalSupply)
+public view returns (uint256 totalSupply)
 ```
 
 Gets the total token supply at the snapshot corresponding to a given timestamp.
@@ -521,6 +573,21 @@ Gets the total token supply at the snapshot corresponding to a given timestamp.
 | Name | Type    | Description                                      |
 | ---- | ------- | ------------------------------------------------ |
 | time | uint256 | The timestamp identifying the snapshot to query. |
+
+------
+
+##### snapshotTotalSupplyExact(uint256) -> (uint256)
+
+```solidity
+function snapshotTotalSupplyExact(uint256 time)
+public view returns (uint256 totalSupply);
+```
+
+Gets the total supply at an exact scheduled snapshot timestamp.
+
+**Details:**
+
+- Reverts with `SnapshotEngine_SnapshotNotFound` if `time` is not an exact scheduled snapshot.
 
 **Return Values:**
 
@@ -534,8 +601,7 @@ Gets the total token supply at the snapshot corresponding to a given timestamp.
 
 ```solidity
 function snapshotInfo(uint256 time, address tokenHolder) 
-public view override(ISnapshotState) 
-returns (uint256 tokenHolderBalance, uint256 totalSupply)
+public view returns (uint256 tokenHolderBalance, uint256 totalSupply)
 ```
 
 Retrieves both an account's balance and the total supply at the snapshot for a given timestamp in a single call.
@@ -560,8 +626,7 @@ Retrieves both an account's balance and the total supply at the snapshot for a g
 
 ```solidity
 function snapshotInfoBatch(uint256 time, address[] calldata addresses) 
-public view override(ISnapshotState) 
-returns (uint256[] memory tokenHolderBalances, uint256 totalSupply)
+public view returns (uint256[] memory tokenHolderBalances, uint256 totalSupply)
 ```
 
 Retrieves balances of multiple accounts and the total supply at a snapshot for a given timestamp in a single call.
@@ -586,8 +651,7 @@ Retrieves balances of multiple accounts and the total supply at a snapshot for a
 
 ```solidity
 function snapshotInfoBatch(uint256[] calldata times, address[] calldata addresses) 
-public view override(ISnapshotState) 
-returns (uint256[][] memory tokenHolderBalances, uint256[] memory totalSupply)
+public view returns (uint256[][] memory tokenHolderBalances, uint256[] memory totalSupply)
 ```
 
 Retrieves balances of multiple accounts at multiple snapshots, as well as the total supply at each snapshot.
@@ -633,13 +697,13 @@ are the latest ones that we tested:
 
   - Solidity [v0.8.30](https://docs.soliditylang.org/en/v0.8.30/)
 
-  - CMTAT [v3.0.0](https://github.com/CMTA/CMTAT/releases/tag/v3.0.0)
+  - CMTAT [v3.2.0](https://github.com/CMTA/CMTAT/releases/tag/v3.2.0)
 
   - OpenZeppelin
 
-    - OpenZeppelin Contracts (Node.js module) [v5.4.0](https://github.com/OpenZeppelin/openzeppelin-contracts/releases/tag/v5.4.0) 
+    - OpenZeppelin Contracts (Node.js module) [v5.6.1](https://github.com/OpenZeppelin/openzeppelin-contracts/releases/tag/v5.6.1) 
 
-    - OpenZeppelin Contracts Upgradeable (Node.js module) [v5.4.0](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/releases/tag/v5.4.0) (to compile CMTAT)
+    - OpenZeppelin Contracts Upgradeable (Node.js module) [v5.6.1](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/releases/tag/v5.6.1) (to compile CMTAT)
 
 
 
@@ -696,7 +760,7 @@ The script calls the plugin [hardhat-contract-sizer](https://www.npmjs.com/packa
 
 #### Testing
 
-Tests are written in JavaScript by using [web3js](https://web3js.readthedocs.io/en/v1.10.0/) and run **only** with Hardhat as follows:
+Tests are written in JavaScript using Hardhat + Ethers and run **only** with Hardhat as follows:
 
 `npx hardhat test`
 
@@ -797,6 +861,16 @@ You can find a prototype to distribute on-chain dividend based on on-chain snaps
 - [CMTAT IncomeVault](https://github.com/CMTA/IncomeVault)
 
 Note that this project used snapshots when they were performed directly inside CMTAT, see [CMTAT v2.4.0](https://github.com/CMTA/CMTAT/releases/tag/v2.4.0), not through the `SnapshotEngine` but the principle is similar.
+
+## Documentation Review
+
+Recommended next improvements for this README:
+
+- Replace `[TOC]` with explicit Markdown links (GitHub does not render `[TOC]` natively).
+- Normalize terminology and typos (`snapshot`, `future`, `SNAPSHOOTER_ROLE`, etc.) across all sections and tables.
+- Consolidate duplicate headings (for example, `Schema` appears multiple times) into one navigation structure.
+- Add a short "Quick Start" section with deploy + test commands and minimal integration steps.
+- Auto-generate API reference from interfaces/contracts to prevent signature drift over time.
 
 ## Intellectual property
 
