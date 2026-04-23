@@ -24,7 +24,29 @@ The codebase is modular, allowing you to use or extend only the components you n
 - `CMTATUpgradeableSnapshot` (`contracts/deployment/CMTATUpgradeableSnapshot.sol`): snapshot logic integrated in CMTAT upgradeable deployment.
 - `CMTATStandaloneSnapshot` (`contracts/deployment/CMTATStandaloneSnapshot.sol`): snapshot logic integrated in CMTAT standalone deployment.
 
-[TOC]
+## Table of Contents
+
+- [When to use it](#when-to-use-it)
+- [How to include it](#how-to-include-it)
+- [CMTAT deployment version](#cmtat-deployment-version)
+- [Schema](#schema)
+- [Technical](#technical)
+- [Access Control](#access-control)
+- [Ethereum API](#ethereum-api)
+- [Storage management (ERC-7201)](#storage-management-erc-7201)
+- [Usage instructions](#usage-instructions)
+- [Generate documentation](#generate-documentation)
+- [Security](#security)
+- [Further reading](#further-reading)
+- [Intellectual property](#intellectual-property)
+
+## Quick Start
+
+```bash
+npm install
+npx hardhat compile
+npx hardhat test
+```
 
 ### When to use it
 
@@ -212,9 +234,9 @@ Here is the list of roles and their 32 bytes identifier.
 
 ### ERC-20 token bound
 
-The ERC-20 bounds to the Snapshot Engine is set at deployment and can not be changed after that.
+The ERC-20 token bound to SnapshotEngine is set at deployment and cannot be changed afterward.
 
-Only the ERC-20 token contract can called the function `operateOnTransfer` defined in the main contract `SnapshotEngine`.
+Only the bound token contract can call `operateOnTransfer` in `SnapshotEngine`.
 
 ## Ethereum API
 
@@ -685,7 +707,7 @@ Retrieves balances of multiple accounts at multiple snapshots, as well as the to
 
 ## Storage management (ERC-7201)
 
-While SnapshotEngine can not be deployed with a proxy, modules implement [ERC-7201](https://eips.ethereum.org/EIPS/eip-7201) to allow them to be directly used by a potential CMTAT deployment version.
+While SnapshotEngine cannot be deployed with a proxy, modules implement [ERC-7201](https://eips.ethereum.org/EIPS/eip-7201) to allow direct reuse by CMTAT deployment variants.
 
 ## Usage instructions
 
@@ -868,16 +890,6 @@ You can find a prototype to distribute on-chain dividend based on on-chain snaps
 - [CMTAT IncomeVault](https://github.com/CMTA/IncomeVault)
 
 Note that this project used snapshots when they were performed directly inside CMTAT, see [CMTAT v2.4.0](https://github.com/CMTA/CMTAT/releases/tag/v2.4.0), not through the `SnapshotEngine` but the principle is similar.
-
-## Documentation Review
-
-Recommended next improvements for this README:
-
-- Replace `[TOC]` with explicit Markdown links (GitHub does not render `[TOC]` natively).
-- Normalize terminology and typos (`snapshot`, `future`, `SNAPSHOOTER_ROLE`, etc.) across all sections and tables.
-- Consolidate duplicate headings (for example, `Schema` appears multiple times) into one navigation structure.
-- Add a short "Quick Start" section with deploy + test commands and minimal integration steps.
-- Auto-generate API reference from interfaces/contracts to prevent signature drift over time.
 
 ## Intellectual property
 
