@@ -48,6 +48,10 @@ Reference: [keepachangelog.com/en/1.1.0/](https://keepachangelog.com/en/1.1.0/)
   - Context: in `0.3.0`, an early-return optimization path in `_findScheduledMostRecentPastSnapshot()` was effectively unreachable because it checked an uninitialized return variable (`time != 0`).
   - Once that condition was corrected to use the real state (`_currentSnapshotTime`), the optimization path became reachable and exposed a pre-existing underflow in `getNextSnapshots()`.
   - Resolution in `0.4.0`: use a strict bound check (`indexLowerBound + 1 < length`) before computing the future-snapshots array size.
+- Add exact snapshot query APIs to prevent misuse with non-scheduled timestamps:
+  - `snapshotExists(time)`
+  - `snapshotBalanceOfExact(time, tokenHolder)` (reverts if `time` is not scheduled)
+  - `snapshotTotalSupplyExact(time)` (reverts if `time` is not scheduled)
 
 ## 0.3.0 - 2025-08-27
 

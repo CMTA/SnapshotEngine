@@ -29,6 +29,10 @@ abstract contract SnapshotStateInternal is SnapshotBase {
         totalSupply = _snapshotTotalSupply(erc20_, time);
     }
 
+    function _isScheduledSnapshot(uint256 time) internal view returns (bool) {
+        return SnapshotBase._snapshotExists(time);
+    }
+
      function _snapshotBalanceOf(
         IERC20 erc20_,
         uint256 time,
@@ -37,6 +41,20 @@ abstract contract SnapshotStateInternal is SnapshotBase {
         return SnapshotBase._snapshotBalanceOf(time, owner, erc20_.balanceOf(owner));
     }
     function _snapshotTotalSupply(IERC20 erc20_, uint256 time) internal view returns (uint256) {
+        return SnapshotBase._snapshotTotalSupply(time, erc20_.totalSupply());
+    }
+
+    function _snapshotBalanceOfExact(
+        IERC20 erc20_,
+        uint256 time,
+        address owner
+    ) internal view returns (uint256) {
+        SnapshotBase._requireSnapshotExists(time);
+        return SnapshotBase._snapshotBalanceOf(time, owner, erc20_.balanceOf(owner));
+    }
+
+    function _snapshotTotalSupplyExact(IERC20 erc20_, uint256 time) internal view returns (uint256) {
+        SnapshotBase._requireSnapshotExists(time);
         return SnapshotBase._snapshotTotalSupply(time, erc20_.totalSupply());
     }
 }

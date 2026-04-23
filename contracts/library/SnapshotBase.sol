@@ -320,6 +320,24 @@ abstract contract SnapshotBase is ISnapshotBase {
         return snapshotted ? value : totalSupply;
     }
 
+    /**
+    * @dev Returns true when `time` is an exact scheduled snapshot timestamp.
+    */
+    function _snapshotExists(uint256 time) internal view returns (bool) {
+        SnapshotBaseStorage storage $ = _getSnapshotBaseStorage();
+        (bool isFound, ) = _findScheduledSnapshotIndex($, time);
+        return isFound;
+    }
+
+    /**
+    * @dev Reverts when `time` is not an exact scheduled snapshot timestamp.
+    */
+    function _requireSnapshotExists(uint256 time) internal view {
+        if (!_snapshotExists(time)) {
+            revert SnapshotEngine_SnapshotNotFound();
+        }
+    }
+
     
     /*//////////////////////////////////////////////////////////////
                         PRIVATE FUNCTIONS

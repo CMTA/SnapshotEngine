@@ -21,6 +21,13 @@ abstract contract SnapshotStateModule is SnapshotStateInternal, ISnapshotState  
     /**
     * @inheritdoc ISnapshotState
     */
+    function snapshotExists(uint256 time) public view override(ISnapshotState) returns (bool) {
+        return _isScheduledSnapshot(time);
+    }
+
+    /**
+    * @inheritdoc ISnapshotState
+    */
     function snapshotInfo(uint256 time, address tokenHolder) public view override(ISnapshotState) returns (uint256 tokenHolderBalance, uint256 totalSupply) {
         (tokenHolderBalance, totalSupply) = _snapshotInfo(erc20, time, tokenHolder);
     }
@@ -52,7 +59,24 @@ abstract contract SnapshotStateModule is SnapshotStateInternal, ISnapshotState  
     /**
     * @inheritdoc ISnapshotState
     */
+    function snapshotBalanceOfExact(
+        uint256 time,
+        address tokenHolder
+    ) public view override(ISnapshotState) returns (uint256) {
+        return _snapshotBalanceOfExact(erc20, time, tokenHolder);
+    }
+
+    /**
+    * @inheritdoc ISnapshotState
+    */
     function snapshotTotalSupply(uint256 time) public view override(ISnapshotState) returns (uint256 totalSupply) {
         return _snapshotTotalSupply(erc20, time);
+    }
+
+    /**
+    * @inheritdoc ISnapshotState
+    */
+    function snapshotTotalSupplyExact(uint256 time) public view override(ISnapshotState) returns (uint256 totalSupply) {
+        return _snapshotTotalSupplyExact(erc20, time);
     }
 }

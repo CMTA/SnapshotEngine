@@ -30,6 +30,13 @@ contract CMTATUpgradeableSnapshot is SnapshotUpdateModule, SnapshotSchedulerModu
     /**
     * @inheritdoc ISnapshotState
     */
+    function snapshotExists(uint256 time) public view override(ISnapshotState) returns (bool) {
+        return _isScheduledSnapshot(time);
+    }
+
+    /**
+    * @inheritdoc ISnapshotState
+    */
     function snapshotInfo(uint256 time, address tokenHolder) public view override(ISnapshotState) returns (uint256 tokenHolderBalance, uint256 totalSupply) {
         (tokenHolderBalance, totalSupply) = _snapshotInfo(IERC20(IERC20(address(this))), time, tokenHolder);
     }
@@ -61,8 +68,25 @@ contract CMTATUpgradeableSnapshot is SnapshotUpdateModule, SnapshotSchedulerModu
     /**
     * @inheritdoc ISnapshotState
     */
+    function snapshotBalanceOfExact(
+        uint256 time,
+        address tokenHolder
+    ) public view override(ISnapshotState) returns (uint256) {
+        return _snapshotBalanceOfExact(IERC20(address(this)), time, tokenHolder);
+    }
+
+    /**
+    * @inheritdoc ISnapshotState
+    */
     function snapshotTotalSupply(uint256 time) public view override(ISnapshotState) returns (uint256 totalSupply) {
         return _snapshotTotalSupply(IERC20(address(this)), time);
+    }
+
+    /**
+    * @inheritdoc ISnapshotState
+    */
+    function snapshotTotalSupplyExact(uint256 time) public view override(ISnapshotState) returns (uint256 totalSupply) {
+        return _snapshotTotalSupplyExact(IERC20(address(this)), time);
     }
 
     /*//////////////////////////////////////////////////////////////

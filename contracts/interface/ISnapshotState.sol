@@ -7,6 +7,12 @@ pragma solidity ^0.8.20;
  * @notice Minimal interface for a contract (e.g. SnapshotEngine or CMTAT) that supports querying historical balances and total supply using snapshots.
  */
 interface ISnapshotState {
+    /**
+     * @notice Returns true if `time` is an exact scheduled snapshot timestamp.
+     * @param time The timestamp to check.
+     */
+    function snapshotExists(uint256 time) external view returns (bool);
+
  /**
      * @notice Get the balance of a specific tokenHolder at the snapshot corresponding to a given timestamp.
      * @param time The timestamp identifying the snapshot to query.
@@ -14,6 +20,14 @@ interface ISnapshotState {
      * @return tokenHolderBalance The recorded balance at the snapshot, or the current balance if no snapshot exists for that timestamp.
      */
     function snapshotBalanceOf(uint256 time,address tokenHolder) external view returns (uint256 tokenHolderBalance);
+
+    /**
+     * @notice Get the balance of a specific tokenHolder at an exact scheduled snapshot timestamp.
+     * @dev Reverts if `time` is not an exact scheduled snapshot timestamp.
+     * @param time The exact snapshot timestamp to query.
+     * @param tokenHolder The address whose balance is being requested.
+     */
+    function snapshotBalanceOfExact(uint256 time,address tokenHolder) external view returns (uint256 tokenHolderBalance);
     
     /**
      * @notice Get the total token supply at the snapshot corresponding to a given timestamp.
@@ -21,6 +35,13 @@ interface ISnapshotState {
      * @return totalSupply The recorded total supply at the snapshot, or the current total supply if no snapshot exists for that timestamp.
      */
     function snapshotTotalSupply(uint256 time) external view returns (uint256 totalSupply);
+
+    /**
+     * @notice Get the total token supply at an exact scheduled snapshot timestamp.
+     * @dev Reverts if `time` is not an exact scheduled snapshot timestamp.
+     * @param time The exact snapshot timestamp to query.
+     */
+    function snapshotTotalSupplyExact(uint256 time) external view returns (uint256 totalSupply);
 
     /**
      * @notice Retrieve both an account's balance and the total supply at the snapshot for a given timestamp in a single call.

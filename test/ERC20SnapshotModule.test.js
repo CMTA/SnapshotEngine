@@ -2,6 +2,7 @@ const ERC20SnapshotModuleCommonRescheduling = require('./ERC20SnapshotModuleComm
 const ERC20SnapshotModuleCommonScheduling = require('./ERC20SnapshotModuleCommon/ERC20SnapshotModuleCommonScheduling')
 const ERC20SnapshotModuleCommonUnschedule = require('./ERC20SnapshotModuleCommon/ERC20SnapshotModuleCommonUnschedule')
 const ERC20SnapshotModuleCommonGetNextSnapshot = require('./ERC20SnapshotModuleCommon/ERC20SnapshotModuleCommonGetNextSnapshot')
+const ERC20SnapshotModuleCommonExact = require('./ERC20SnapshotModuleCommon/ERC20SnapshotModuleCommonExact')
 const ERC20SnapshotModuleMultiplePlannedTest = require('./ERC20SnapshotModuleCommon/global/ERC20SnapshotModuleMultiplePlannedTest')
 const ERC20SnapshotModuleOnePlannedSnapshotTest = require('./ERC20SnapshotModuleCommon/global/ERC20SnapshotModuleOnePlannedSnapshotTest')
 const ERC20SnapshotModuleZeroPlannedSnapshotTest = require('./ERC20SnapshotModuleCommon/global/ERC20SnapshotModuleZeroPlannedSnapshot')
@@ -29,4 +30,5 @@ describe('Standard - ERC20SnapshotModule', function () {
   ERC20SnapshotModuleCommonScheduling()
   ERC20SnapshotModuleCommonUnschedule()
   ERC20SnapshotModuleCommonGetNextSnapshot()
+  ERC20SnapshotModuleCommonExact()
 })
