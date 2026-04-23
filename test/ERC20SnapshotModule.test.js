@@ -15,6 +15,7 @@ const {
 describe('Standard - ERC20SnapshotModule', function () {
   beforeEach(async function () {
     Object.assign(this, await loadFixture(fixture))
+    this.snapshotAdminMode = 'access-control'
     this.cmtat = await deployCMTATStandalone(
       this._.address,
       this.admin.address,

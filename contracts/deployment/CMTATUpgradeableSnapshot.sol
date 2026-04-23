@@ -5,14 +5,14 @@ pragma solidity ^0.8.20;
 /* ==== OpenZeppelin === */
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 /* ==== Modules === */
-import {SnapshotSchedulerModule} from "./modules/SnapshotSchedulerModule.sol";
-import {SnapshotUpdateModule} from "./modules/SnapshotUpdateModule.sol";
+import {SnapshotSchedulerModule} from "../modules/SnapshotSchedulerModule.sol";
+import {SnapshotUpdateModule} from "../modules/SnapshotUpdateModule.sol";
 /* ==== CMTAT === */
-import {CMTATBaseCommon, ERC20Upgradeable} from "../CMTAT/contracts/modules/0_CMTATBaseCommon.sol";
-import {CMTATBaseRuleEngine} from "../CMTAT/contracts/modules/2_CMTATBaseRuleEngine.sol";
+import {CMTATBaseCommon, ERC20Upgradeable} from "../../CMTAT/contracts/modules/0_CMTATBaseCommon.sol";
+import {CMTATBaseRuleEngine} from "../../CMTAT/contracts/modules/2_CMTATBaseRuleEngine.sol";
 /* ==== Interfaces and library === */
-import {ISnapshotState} from "./interface/ISnapshotState.sol";
-import {SnapshotStateInternal} from "./library/SnapshotStateInternal.sol";
+import {ISnapshotState} from "../interface/ISnapshotState.sol";
+import {SnapshotStateInternal} from "../library/SnapshotStateInternal.sol";
 contract CMTATUpgradeableSnapshot is SnapshotUpdateModule, SnapshotSchedulerModule, CMTATBaseRuleEngine,  SnapshotStateInternal, ISnapshotState{
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor()  {

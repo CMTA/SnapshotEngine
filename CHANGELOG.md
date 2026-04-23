@@ -60,12 +60,15 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
   - Document snapshot materialization observability:
     - `SnapshotMaterialized(time, blockNumber)` emitted when `_setCurrentSnapshot()` advances.
     - `poke()` can be used by authorized accounts to materialize due snapshots without requiring token transfers.
+  - Add a second deployment variant using OpenZeppelin `Ownable2Step` (`SnapshotEngineOwnable2Step`) and refactor shared deployment logic into `SnapshotEngineBase` to minimize duplication.
 
 - Testing
   - Add tests for exact snapshot queries (scheduled vs non-scheduled timestamps and parity with legacy queries on scheduled timestamps).
   - Add tests for snapshot materialization event emission.
   - Add tests for `poke()` access control and idempotent behavior.
   - Add test coverage for `SnapshotUnschedule(time)` emission in `unscheduleSnapshotNotOptimized`.
+  - Add a dedicated `SnapshotEngineOwnable2Step` test suite and share common snapshot behavior tests across AccessControl and Ownable variants.
+  - Refactor admin-authorization assertions into a shared helper to avoid duplicated expectations across test modules.
 
 ## 0.3.0 - 2025-08-27
 

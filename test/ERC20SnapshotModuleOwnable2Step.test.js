@@ -7,63 +7,27 @@ const ERC20SnapshotModuleCommonMaterialized = require('./ERC20SnapshotModuleComm
 const ERC20SnapshotModuleMultiplePlannedTest = require('./ERC20SnapshotModuleCommon/global/ERC20SnapshotModuleMultiplePlannedTest')
 const ERC20SnapshotModuleOnePlannedSnapshotTest = require('./ERC20SnapshotModuleCommon/global/ERC20SnapshotModuleOnePlannedSnapshotTest')
 const ERC20SnapshotModuleZeroPlannedSnapshotTest = require('./ERC20SnapshotModuleCommon/global/ERC20SnapshotModuleZeroPlannedSnapshot')
-const { ethers,  upgrades } = require("hardhat");
-const { ZeroAddress, keccak256, toUtf8Bytes } = require("ethers");
 const {
+  deployCMTATStandalone,
   fixture,
   loadFixture
 } = require('../CMTAT/test/deploymentUtils')
-const { zeroAddress } = require('ethereumjs-util')
-describe('CMTAT Snapshot Upgradeable', function () {
+
+describe('Standard - ERC20SnapshotModule Ownable2Step', function () {
   beforeEach(async function () {
-    this.snapshotAdminMode = 'access-control'
-    const ruleEngine = ZeroAddress;
-  const snapshotEngine = ZeroAddress;
-  const documentEngine = ZeroAddress;
-  const ERC20Attributes = {
-    name: "Security Token",
-    symbol: "ST",
-    decimalsIrrevocable: 0 // Compliant with CMTAT spec but can be different
-  };
-
-  const terms = {
-    name: "Token Terms v1",
-    uri: "https://cmta.ch/standards/cmta-token-cmtat",
-    documentHash: keccak256(toUtf8Bytes("terms-v1"))
-  };
-
-  const extraInformationAttributes = {
-    tokenId: "1234567890", // ISIN or identifier
-    terms: terms,
-    information: "CMTAT smart contract"
-  };
-
-  const engines = {
-    ruleEngine: ruleEngine,
-    snapshotEngine: snapshotEngine,
-    documentEngine: documentEngine
-  };
-
     Object.assign(this, await loadFixture(fixture))
-    const ETHERS_CMTAT_PROXY_FACTORY = await ethers.getContractFactory(
-      'CMTATUpgradeableSnapshot'
+    this.snapshotAdminMode = 'ownable-2step'
+    this.cmtat = await deployCMTATStandalone(
+      this._.address,
+      this.admin.address,
+      this.deployerAddress.address
     )
-    this.cmtat = await upgrades.deployProxy(
-      ETHERS_CMTAT_PROXY_FACTORY,
-      [
-        this.admin.address,
-        ERC20Attributes,
-        extraInformationAttributes,
-        engines
-      ],
-      {
-        initializer: 'initialize',
-        from: this.admin.address,
-        unsafeAllow: ['missing-initializer']
-      }
-    )
-    this.transferEngineMock = this.cmtat
+    this.transferEngineMock = await ethers.deployContract('SnapshotEngineOwnable2Step', [
+      this.cmtat.target, this.admin
+    ])
+    this.cmtat.connect(this.admin).setSnapshotEngine(this.transferEngineMock)
   })
+
   ERC20SnapshotModuleMultiplePlannedTest()
   ERC20SnapshotModuleOnePlannedSnapshotTest()
   ERC20SnapshotModuleZeroPlannedSnapshotTest()

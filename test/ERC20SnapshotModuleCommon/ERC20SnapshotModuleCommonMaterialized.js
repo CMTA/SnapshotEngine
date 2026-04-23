@@ -1,7 +1,9 @@
 const { time } = require('@nomicfoundation/hardhat-network-helpers')
 const { anyValue } = require('@nomicfoundation/hardhat-chai-matchers/withArgs')
 const { expect } = require('chai')
-const { SNAPSHOOTER_ROLE } = require('../utils')
+const {
+  expectUnauthorizedSnapshotAdmin
+} = require('./ERC20SnapshotModuleUtils/authorization')
 
 function ERC20SnapshotModuleCommonMaterialized () {
   context('Snapshot materialization', function () {
@@ -21,12 +23,11 @@ function ERC20SnapshotModuleCommonMaterialized () {
     })
 
     it('poke is access controlled', async function () {
-      await expect(this.transferEngineMock.connect(this.address1).poke())
-        .to.be.revertedWithCustomError(
-          this.transferEngineMock,
-          'AccessControlUnauthorizedAccount'
-        )
-        .withArgs(this.address1.address, SNAPSHOOTER_ROLE)
+      await expectUnauthorizedSnapshotAdmin(
+        this,
+        this.transferEngineMock.connect(this.address1).poke(),
+        this.address1
+      )
     })
 
     it('poke materializes once and does not emit repeatedly for same snapshot', async function () {
