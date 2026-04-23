@@ -9,3 +9,4 @@ Note:
 - `CMTAT/` is a git submodule and should be treated as external code.
 
 - Update `CHANGELOG.md` for each new relevant modification.
+- After each implemented feature or fix, provide a one-line GitHub commit message for all changes since the last commit.

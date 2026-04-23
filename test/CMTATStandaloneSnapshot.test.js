@@ -1,13 +1,14 @@
+const { ethers } = require('hardhat')
 const {
   registerSnapshotCommonSuites
 } = require('./ERC20SnapshotModuleCommon/registerSnapshotCommonSuites')
-const { ethers,  upgrades } = require("hardhat");
 const {
   fixture,
   loadFixture
 } = require('../CMTAT/test/deploymentUtils')
 const { buildCmtatInitParams } = require('./helpers/cmtatInitParams')
-describe('CMTAT Snapshot Upgradeable', function () {
+
+describe('CMTAT Snapshot Standalone', function () {
   beforeEach(async function () {
     this.snapshotAdminMode = 'access-control'
     const {
@@ -17,24 +18,14 @@ describe('CMTAT Snapshot Upgradeable', function () {
     } = buildCmtatInitParams()
 
     Object.assign(this, await loadFixture(fixture))
-    const ETHERS_CMTAT_PROXY_FACTORY = await ethers.getContractFactory(
-      'CMTATUpgradeableSnapshot'
-    )
-    this.cmtat = await upgrades.deployProxy(
-      ETHERS_CMTAT_PROXY_FACTORY,
-      [
-        this.admin.address,
-        ERC20Attributes,
-        extraInformationAttributes,
-        engines
-      ],
-      {
-        initializer: 'initialize',
-        from: this.admin.address,
-        unsafeAllow: ['missing-initializer']
-      }
-    )
+    this.cmtat = await ethers.deployContract('CMTATStandaloneSnapshot', [
+      this.admin.address,
+      ERC20Attributes,
+      extraInformationAttributes,
+      engines
+    ])
     this.transferEngineMock = this.cmtat
   })
+
   registerSnapshotCommonSuites()
 })

@@ -61,6 +61,7 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
     - `SnapshotMaterialized(time, blockNumber)` emitted when `_setCurrentSnapshot()` advances.
     - `poke()` can be used by authorized accounts to materialize due snapshots without requiring token transfers.
   - Add a second deployment variant using OpenZeppelin `Ownable2Step` (`SnapshotEngineOwnable2Step`) and refactor shared deployment logic into `SnapshotEngineBase` to minimize duplication.
+  - Add `CMTATStandaloneSnapshot` (standalone/non-proxy deployment) and refactor shared CMTAT+snapshot behavior into `CMTATSnapshotBase` to minimize duplication with `CMTATUpgradeableSnapshot`.
 
 - Testing
   - Add tests for exact snapshot queries (scheduled vs non-scheduled timestamps and parity with legacy queries on scheduled timestamps).
@@ -68,7 +69,9 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
   - Add tests for `poke()` access control and idempotent behavior.
   - Add test coverage for `SnapshotUnschedule(time)` emission in `unscheduleSnapshotNotOptimized`.
   - Add a dedicated `SnapshotEngineOwnable2Step` test suite and share common snapshot behavior tests across AccessControl and Ownable variants.
+  - Add a dedicated `CMTATStandaloneSnapshot` test suite reusing the same shared snapshot behavior suites.
   - Refactor admin-authorization assertions into a shared helper to avoid duplicated expectations across test modules.
+  - Refactor snapshot suite registration and CMTAT init params into shared test helpers to reduce duplication across test entrypoints.
 
 ## 0.3.0 - 2025-08-27
 
