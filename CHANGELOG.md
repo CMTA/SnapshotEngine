@@ -25,6 +25,8 @@ See [https://semver.org](https://semver.org)
 
 Reference: [keepachangelog.com/en/1.1.0/](https://keepachangelog.com/en/1.1.0/)
 
+Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
+
 ## Checklist
 
 > Before a new release, perform the following tasks
@@ -43,18 +45,27 @@ Reference: [keepachangelog.com/en/1.1.0/](https://keepachangelog.com/en/1.1.0/)
 
 ## 0.4.0
 
-- Emit `SnapshotUnschedule(time)` in `unscheduleSnapshotNotOptimized` for consistent unschedule event tracking across both unschedule paths.
-- Fix `getNextSnapshots()` arithmetic underflow when no future snapshots remain.
-  - Context: in `0.3.0`, an early-return optimization path in `_findScheduledMostRecentPastSnapshot()` was effectively unreachable because it checked an uninitialized return variable (`time != 0`).
-  - Once that condition was corrected to use the real state (`_currentSnapshotTime`), the optimization path became reachable and exposed a pre-existing underflow in `getNextSnapshots()`.
-  - Resolution in `0.4.0`: use a strict bound check (`indexLowerBound + 1 < length`) before computing the future-snapshots array size.
-- Add exact snapshot query APIs to prevent misuse with non-scheduled timestamps:
-  - `snapshotExists(time)`
-  - `snapshotBalanceOfExact(time, tokenHolder)` (reverts if `time` is not scheduled)
-  - `snapshotTotalSupplyExact(time)` (reverts if `time` is not scheduled)
-- Add snapshot materialization observability:
-  - `SnapshotMaterialized(time, blockNumber)` emitted when `_setCurrentSnapshot()` advances.
-  - `poke()` can be used by authorized accounts to materialize due snapshots without requiring token transfers.
+- Dependencies
+  - Align integration for `CMTAT v3.2.0`.
+  - Update `CMTATBaseRuleEngine` import path (`1_CMTATBaseRuleEngine.sol` -> `2_CMTATBaseRuleEngine.sol`).
+  - Update version interface usage from `IERC3643Base` to `IERC3643Version`.
+  - Update OpenZeppelin dependencies to `@openzeppelin/contracts` and `@openzeppelin/contracts-upgradeable` `5.6.1`.
+
+- Documentation
+  - Clarify and document the `0.3.0` known issue and `0.4.0` resolution for `getNextSnapshots()` arithmetic underflow when no future snapshots remain.
+  - Document strict snapshot query semantics with exact-time APIs:
+    - `snapshotExists(time)`
+    - `snapshotBalanceOfExact(time, tokenHolder)` (reverts if `time` is not scheduled)
+    - `snapshotTotalSupplyExact(time)` (reverts if `time` is not scheduled)
+  - Document snapshot materialization observability:
+    - `SnapshotMaterialized(time, blockNumber)` emitted when `_setCurrentSnapshot()` advances.
+    - `poke()` can be used by authorized accounts to materialize due snapshots without requiring token transfers.
+
+- Testing
+  - Add tests for exact snapshot queries (scheduled vs non-scheduled timestamps and parity with legacy queries on scheduled timestamps).
+  - Add tests for snapshot materialization event emission.
+  - Add tests for `poke()` access control and idempotent behavior.
+  - Add test coverage for `SnapshotUnschedule(time)` emission in `unscheduleSnapshotNotOptimized`.
 
 ## 0.3.0 - 2025-08-27
 
