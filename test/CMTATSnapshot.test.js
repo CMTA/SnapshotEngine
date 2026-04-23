@@ -3,6 +3,7 @@ const ERC20SnapshotModuleCommonScheduling = require('./ERC20SnapshotModuleCommon
 const ERC20SnapshotModuleCommonUnschedule = require('./ERC20SnapshotModuleCommon/ERC20SnapshotModuleCommonUnschedule')
 const ERC20SnapshotModuleCommonGetNextSnapshot = require('./ERC20SnapshotModuleCommon/ERC20SnapshotModuleCommonGetNextSnapshot')
 const ERC20SnapshotModuleCommonExact = require('./ERC20SnapshotModuleCommon/ERC20SnapshotModuleCommonExact')
+const ERC20SnapshotModuleCommonMaterialized = require('./ERC20SnapshotModuleCommon/ERC20SnapshotModuleCommonMaterialized')
 const ERC20SnapshotModuleMultiplePlannedTest = require('./ERC20SnapshotModuleCommon/global/ERC20SnapshotModuleMultiplePlannedTest')
 const ERC20SnapshotModuleOnePlannedSnapshotTest = require('./ERC20SnapshotModuleCommon/global/ERC20SnapshotModuleOnePlannedSnapshotTest')
 const ERC20SnapshotModuleZeroPlannedSnapshotTest = require('./ERC20SnapshotModuleCommon/global/ERC20SnapshotModuleZeroPlannedSnapshot')
@@ -70,4 +71,5 @@ describe('CMTAT Snapshot Upgradeable', function () {
   ERC20SnapshotModuleCommonUnschedule()
   ERC20SnapshotModuleCommonGetNextSnapshot()
   ERC20SnapshotModuleCommonExact()
+  ERC20SnapshotModuleCommonMaterialized()
 })

@@ -259,13 +259,15 @@ abstract contract SnapshotBase is ISnapshotBase {
     */
     function _setCurrentSnapshot() internal {
         SnapshotBaseStorage storage $ = _getSnapshotBaseStorage();
+        uint256 previousSnapshotTime = $._currentSnapshotTime;
         (
             uint256 scheduleSnapshotTime,
             uint256 scheduleSnapshotIndex
         ) = _findScheduledMostRecentPastSnapshot($);
-        if (scheduleSnapshotTime > 0) {
+        if (scheduleSnapshotTime > previousSnapshotTime) {
             $._currentSnapshotTime = scheduleSnapshotTime;
             $._currentSnapshotIndex = scheduleSnapshotIndex;
+            emit SnapshotMaterialized(scheduleSnapshotTime, block.number);
         }
     }
 

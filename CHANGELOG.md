@@ -52,6 +52,9 @@ Reference: [keepachangelog.com/en/1.1.0/](https://keepachangelog.com/en/1.1.0/)
   - `snapshotExists(time)`
   - `snapshotBalanceOfExact(time, tokenHolder)` (reverts if `time` is not scheduled)
   - `snapshotTotalSupplyExact(time)` (reverts if `time` is not scheduled)
+- Add snapshot materialization observability:
+  - `SnapshotMaterialized(time, blockNumber)` emitted when `_setCurrentSnapshot()` advances.
+  - `poke()` can be used by authorized accounts to materialize due snapshots without requiring token transfers.
 
 ## 0.3.0 - 2025-08-27
 
