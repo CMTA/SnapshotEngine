@@ -7,3 +7,5 @@ Main point:
 
 Note:
 - `CMTAT/` is a git submodule and should be treated as external code.
+
+- Update `CHANGELOG.md` for each new relevant modification.

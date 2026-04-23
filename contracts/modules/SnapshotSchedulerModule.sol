@@ -12,6 +12,14 @@ abstract contract SnapshotSchedulerModule is SnapshotBase, ISnapshotScheduler {
     /**
     * @inheritdoc ISnapshotScheduler
     */
+    function poke() public virtual {
+        _authorizeSnapshot();
+        SnapshotBase._setCurrentSnapshot();
+    }
+
+    /**
+    * @inheritdoc ISnapshotScheduler
+    */
     function scheduleSnapshot(uint256 time) public virtual {
          _authorizeSnapshot();
         SnapshotBase._scheduleSnapshot(time);
