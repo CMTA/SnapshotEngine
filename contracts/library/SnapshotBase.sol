@@ -83,7 +83,7 @@ abstract contract SnapshotBase is ISnapshotBase {
                 return $._scheduledSnapshots;
             } else {
                 // There are snapshots situated in the futur
-                if (indexLowerBound + 1 != $._scheduledSnapshots.length) {
+                if (indexLowerBound + 1 < $._scheduledSnapshots.length) {
                     // All next snapshots are located after the snapshot specified by indexLowerBound
                     uint256 arraySize = $._scheduledSnapshots.length -
                         indexLowerBound -
@@ -248,6 +248,7 @@ abstract contract SnapshotBase is ISnapshotBase {
         $._scheduledSnapshots = scheduledSnapshotLocal;
         // pop is only available for storage array
         $._scheduledSnapshots.pop();
+        emit SnapshotUnschedule(time);
     }
 
 

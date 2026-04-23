@@ -25,9 +25,12 @@ function ERC20SnapshotModuleCommonUnschedule () {
       let snapshots = await this.transferEngineMock.getNextSnapshots()
       expect(snapshots.length).to.equal(1)
       expect(snapshots[0]).to.equal(SNAPSHOT_TIME)
-      await this.transferEngineMock
+      this.logs = await this.transferEngineMock
         .connect(this.admin)
         .unscheduleSnapshotNotOptimized(SNAPSHOT_TIME)
+      await expect(this.logs)
+        .to.emit(this.transferEngineMock, 'SnapshotUnschedule')
+        .withArgs(SNAPSHOT_TIME)
       snapshots = await this.transferEngineMock.getNextSnapshots()
       expect(snapshots.length).to.equal(0)
     })
