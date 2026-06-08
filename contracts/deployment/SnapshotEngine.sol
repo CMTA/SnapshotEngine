@@ -4,13 +4,15 @@ pragma solidity ^0.8.20;
 
 /* ==== OpenZeppelin === */
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
+import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
+import {IAccessControl} from "@openzeppelin/contracts/access/IAccessControl.sol";
 /* ==== Deployment === */
 import {SnapshotEngineBase} from "../base/SnapshotEngineBase.sol";
 /* ==== Interfaces and library === */
 import {IERC20SnapshotCompatible} from "../interface/IERC20SnapshotCompatible.sol";
 import {Errors} from "../library/Errors.sol";
 
-contract SnapshotEngine is SnapshotEngineBase, AccessControl {
+contract SnapshotEngine is SnapshotEngineBase, AccessControlEnumerable {
     /* ============ State Variables ============ */
     bytes32 public constant SNAPSHOOTER_ROLE = keccak256("SNAPSHOOTER_ROLE");
 
@@ -29,7 +31,7 @@ contract SnapshotEngine is SnapshotEngineBase, AccessControl {
     function hasRole(
         bytes32 role,
         address account
-    ) public view virtual override(AccessControl) returns (bool) {
+    ) public view virtual override(AccessControl, IAccessControl) returns (bool) {
         // The Default Admin has all roles
         if (AccessControl.hasRole(DEFAULT_ADMIN_ROLE, account)) {
             return true;

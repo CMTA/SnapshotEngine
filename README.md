@@ -19,7 +19,7 @@ The codebase is modular, allowing you to use or extend only the components you n
 
 ## Deployment Variants
 
-- `SnapshotEngine` (`contracts/deployment/SnapshotEngine.sol`): external engine with AccessControl (`SNAPSHOOTER_ROLE`).
+- `SnapshotEngine` (`contracts/deployment/SnapshotEngine.sol`): external engine with AccessControlEnumerable (`SNAPSHOOTER_ROLE`).
 - `SnapshotEngineOwnable2Step` (`contracts/deployment/SnapshotEngineOwnable2Step.sol`): external engine with Ownable2Step authorization.
 - `CMTATUpgradeableInternalSnapshot` (`contracts/deployment/CMTATUpgradeableInternalSnapshot.sol`): internal snapshot logic integrated in a local CMTAT upgradeable deployment.
 - `CMTATStandaloneInternalSnapshot` (`contracts/deployment/CMTATStandaloneInternalSnapshot.sol`): internal snapshot logic integrated in a local CMTAT standalone deployment.

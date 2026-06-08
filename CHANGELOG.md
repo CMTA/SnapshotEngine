@@ -54,6 +54,7 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
 
 - Changed
   - Bump `VersionModule.VERSION` and deployment test expectations to `0.4.0`.
+  - Switch `SnapshotEngine` from OpenZeppelin `AccessControl` to `AccessControlEnumerable`.
   - Remove `CMTATBaseSnapshot` support from local `CMTATUpgradeableInternalSnapshot` and `CMTATStandaloneInternalSnapshot` so these deployment variants only support internal snapshots.
   - Keep external `SnapshotEngine` support separate from the local CMTAT deployment variants because combining both paths exceeds the EVM contract size limit.
   - Rename the local shared CMTAT snapshot base from `CMTATSnapshotBase` to `CMTATInternalSnapshotBase` to avoid confusion with upstream CMTAT snapshot contracts.
