@@ -46,11 +46,17 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
 ## 0.4.0
 
 - Dependencies
-  - Align integration for `CMTAT v3.2.0`.
-  - Update `CMTATBaseRuleEngine` import path (`1_CMTATBaseRuleEngine.sol` -> `2_CMTATBaseRuleEngine.sol`).
+  - Align integration for `CMTAT v3.3.0-rc1`.
+  - Update `CMTATBaseRuleEngine` import path (`2_CMTATBaseRuleEngine.sol` -> `3_CMTATBaseRuleEngine.sol`).
   - Update version interface usage from `IERC3643Base` to `IERC3643Version`.
   - Update OpenZeppelin dependencies to `@openzeppelin/contracts` and `@openzeppelin/contracts-upgradeable` `5.6.1`.
   - Replace full `IERC20` dependency in SnapshotEngine modules with a minimal `IERC20SnapshotCompatible` interface (`balanceOf`, `totalSupply`).
+
+- Changed
+  - Remove `CMTATBaseSnapshot` support from local `CMTATUpgradeableInternalSnapshot` and `CMTATStandaloneInternalSnapshot` so these deployment variants only support internal snapshots.
+  - Keep external `SnapshotEngine` support separate from the local CMTAT deployment variants because combining both paths exceeds the EVM contract size limit.
+  - Rename the local shared CMTAT snapshot base from `CMTATSnapshotBase` to `CMTATInternalSnapshotBase` to avoid confusion with upstream CMTAT snapshot contracts.
+  - Rename the local deployment contracts from `CMTATUpgradeableSnapshot` / `CMTATStandaloneSnapshot` to `CMTATUpgradeableInternalSnapshot` / `CMTATStandaloneInternalSnapshot` to avoid colliding with upstream CMTAT contract names.
 
 - Documentation
   - Clarify and document the `0.3.0` known issue and `0.4.0` resolution for `getNextSnapshots()` arithmetic underflow when no future snapshots remain.
@@ -62,8 +68,10 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
     - `SnapshotMaterialized(time, blockNumber)` emitted when `_setCurrentSnapshot()` advances.
     - `poke()` can be used by authorized accounts to materialize due snapshots without requiring token transfers.
   - Add a second deployment variant using OpenZeppelin `Ownable2Step` (`SnapshotEngineOwnable2Step`) and refactor shared deployment logic into `SnapshotEngineBase` to minimize duplication.
-  - Add `CMTATStandaloneSnapshot` (standalone/non-proxy deployment) and refactor shared CMTAT+snapshot behavior into `CMTATSnapshotBase` to minimize duplication with `CMTATUpgradeableSnapshot`.
+  - Add `CMTATStandaloneInternalSnapshot` (standalone/non-proxy deployment) and refactor shared CMTAT+snapshot behavior into `CMTATInternalSnapshotBase` to minimize duplication with `CMTATUpgradeableInternalSnapshot`.
   - Update README integration guidance to document the minimal token interface required by SnapshotEngine (`IERC20SnapshotCompatible`).
+  - Clarify in `README.md` that local `CMTAT*InternalSnapshot` deployment contracts are internal-snapshot-only and that external snapshot-engine-enabled CMTAT deployments should come from the `CMTAT` repository snapshot variants.
+  - Add a `SnapshotEngine` compatibility table and setup guidance for supported CMTAT target versions.
 
 - Testing
   - Add tests for exact snapshot queries (scheduled vs non-scheduled timestamps and parity with legacy queries on scheduled timestamps).
@@ -71,7 +79,7 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
   - Add tests for `poke()` access control and idempotent behavior.
   - Add test coverage for `SnapshotUnschedule(time)` emission in `unscheduleSnapshotNotOptimized`.
   - Add a dedicated `SnapshotEngineOwnable2Step` test suite and share common snapshot behavior tests across AccessControl and Ownable variants.
-  - Add a dedicated `CMTATStandaloneSnapshot` test suite reusing the same shared snapshot behavior suites.
+  - Add a dedicated `CMTATStandaloneInternalSnapshot` test suite reusing the same shared snapshot behavior suites.
   - Refactor admin-authorization assertions into a shared helper to avoid duplicated expectations across test modules.
   - Refactor snapshot suite registration and CMTAT init params into shared test helpers to reduce duplication across test entrypoints.
 

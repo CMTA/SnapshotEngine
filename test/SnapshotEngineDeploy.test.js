@@ -1,17 +1,13 @@
 const { ZERO_ADDRESS } = require('./utils.js')
 const { expect } = require('chai')
-const {
-  deployCMTATStandalone,
-  fixture,
-  loadFixture
-} = require('../CMTAT/test/deploymentUtils.js')
+const { fixture, loadFixture } = require('../CMTAT/test/deploymentUtils.js')
+const { deployExternalSnapshotCmtat } = require('./helpers/deployExternalSnapshotCmtat')
 describe('Deploy Snapshot Engine', function () {
   beforeEach(async function () {
     Object.assign(this, await loadFixture(fixture))
-    this.cmtat = await deployCMTATStandalone(
+    this.cmtat = await deployExternalSnapshotCmtat(
       this._.address,
-      this.admin.address,
-      this.deployerAddress.address
+      this.admin.address
     )
     this.transferEngineCustomError = await ethers.deployContract(
       'SnapshotEngine',

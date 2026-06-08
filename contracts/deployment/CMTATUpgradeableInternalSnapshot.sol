@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.20;
 
-import {CMTATSnapshotBase} from "../base/CMTATSnapshotBase.sol";
+import {CMTATInternalSnapshotBase} from "../base/CMTATInternalSnapshotBase.sol";
 
-contract CMTATUpgradeableSnapshot is CMTATSnapshotBase {
+contract CMTATUpgradeableInternalSnapshot is CMTATInternalSnapshotBase {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         // Disable the possibility to initialize the implementation

@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./library/SnapshotStateInternal.sol | 24e8f6b0f169beb77fb60d401e9d894840f52532 |
+| ./deployment/CMTATStandaloneSnapshot.sol | a6e1bacb2376112a378e1532d7b33b8ef45e2048 |
 
 
 ### Contracts Description Table
@@ -15,15 +15,8 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **SnapshotStateInternal** | Implementation | SnapshotBase |||
-| └ | _snapshotInfoBatch | Internal 🔒 |   | |
-| └ | _snapshotInfoBatch | Internal 🔒 |   | |
-| └ | _snapshotInfo | Internal 🔒 |   | |
-| └ | _isScheduledSnapshot | Internal 🔒 |   | |
-| └ | _snapshotBalanceOf | Internal 🔒 |   | |
-| └ | _snapshotTotalSupply | Internal 🔒 |   | |
-| └ | _snapshotBalanceOfExact | Internal 🔒 |   | |
-| └ | _snapshotTotalSupplyExact | Internal 🔒 |   | |
+| **CMTATStandaloneSnapshot** | Implementation | CMTATInternalSnapshotBase |||
+| └ | <Constructor> | Public ❗️ | 🛑  |NO❗️ |
 
 
 ### Legend

@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./SnapshotEngine.sol | 20863d39f4f943e6da0022c2d77ec6ae2856280c |
+| ./deployment/SnapshotEngine.sol | 5b05cce02b9142331d424c194bbe3c7215db03ae |
 
 
 ### Contracts Description Table
@@ -15,10 +15,9 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **SnapshotEngine** | Implementation | SnapshotStateModule, SnapshotUpdateModule, SnapshotSchedulerModule, VersionModule, AccessControl, ISnapshotEngine |||
-| └ | <Constructor> | Public ❗️ | 🛑  |NO❗️ |
+| **SnapshotEngine** | Implementation | SnapshotEngineBase, AccessControl |||
+| └ | <Constructor> | Public ❗️ | 🛑  | SnapshotEngineBase |
 | └ | hasRole | Public ❗️ |   |NO❗️ |
-| └ | operateOnTransfer | Public ❗️ | 🛑  | onlyBoundToken |
 | └ | _authorizeSnapshot | Internal 🔒 | 🛑  | onlyRole |
 
 

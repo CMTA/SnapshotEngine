@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./library/SnapshotStateInternal.sol | 24e8f6b0f169beb77fb60d401e9d894840f52532 |
+| ./base/SnapshotEngineBase.sol | 3885d52adbdbee3fe32dad6d3119ed407fdede70 |
 
 
 ### Contracts Description Table
@@ -15,15 +15,9 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **SnapshotStateInternal** | Implementation | SnapshotBase |||
-| └ | _snapshotInfoBatch | Internal 🔒 |   | |
-| └ | _snapshotInfoBatch | Internal 🔒 |   | |
-| └ | _snapshotInfo | Internal 🔒 |   | |
-| └ | _isScheduledSnapshot | Internal 🔒 |   | |
-| └ | _snapshotBalanceOf | Internal 🔒 |   | |
-| └ | _snapshotTotalSupply | Internal 🔒 |   | |
-| └ | _snapshotBalanceOfExact | Internal 🔒 |   | |
-| └ | _snapshotTotalSupplyExact | Internal 🔒 |   | |
+| **SnapshotEngineBase** | Implementation | SnapshotStateModule, SnapshotUpdateModule, SnapshotSchedulerModule, VersionModule, ISnapshotEngine |||
+| └ | <Constructor> | Public ❗️ | 🛑  |NO❗️ |
+| └ | operateOnTransfer | Public ❗️ | 🛑  | onlyBoundToken |
 
 
 ### Legend

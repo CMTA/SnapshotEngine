@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./library/SnapshotStateInternal.sol | 24e8f6b0f169beb77fb60d401e9d894840f52532 |
+| ./mock/CMTAT_EXTERNAL_SNAPSHOT_STANDALONE_MOCK.sol | a89f6e42f1efb99ec1f05943dbffc50e3abda541 |
 
 
 ### Contracts Description Table
@@ -15,15 +15,8 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **SnapshotStateInternal** | Implementation | SnapshotBase |||
-| └ | _snapshotInfoBatch | Internal 🔒 |   | |
-| └ | _snapshotInfoBatch | Internal 🔒 |   | |
-| └ | _snapshotInfo | Internal 🔒 |   | |
-| └ | _isScheduledSnapshot | Internal 🔒 |   | |
-| └ | _snapshotBalanceOf | Internal 🔒 |   | |
-| └ | _snapshotTotalSupply | Internal 🔒 |   | |
-| └ | _snapshotBalanceOfExact | Internal 🔒 |   | |
-| └ | _snapshotTotalSupplyExact | Internal 🔒 |   | |
+| **CMTAT_EXTERNAL_SNAPSHOT_STANDALONE_MOCK** | Implementation | CMTATStandaloneSnapshotExternal |||
+| └ | <Constructor> | Public ❗️ | 🛑  | CMTATStandaloneSnapshotExternal |
 
 
 ### Legend

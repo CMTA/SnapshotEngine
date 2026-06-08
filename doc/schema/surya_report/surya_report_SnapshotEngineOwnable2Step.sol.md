@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./library/SnapshotStateInternal.sol | 24e8f6b0f169beb77fb60d401e9d894840f52532 |
+| ./deployment/SnapshotEngineOwnable2Step.sol | 1a944cac22c3701bb5d8dc93cbf414cffe3c36fc |
 
 
 ### Contracts Description Table
@@ -15,15 +15,9 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **SnapshotStateInternal** | Implementation | SnapshotBase |||
-| └ | _snapshotInfoBatch | Internal 🔒 |   | |
-| └ | _snapshotInfoBatch | Internal 🔒 |   | |
-| └ | _snapshotInfo | Internal 🔒 |   | |
-| └ | _isScheduledSnapshot | Internal 🔒 |   | |
-| └ | _snapshotBalanceOf | Internal 🔒 |   | |
-| └ | _snapshotTotalSupply | Internal 🔒 |   | |
-| └ | _snapshotBalanceOfExact | Internal 🔒 |   | |
-| └ | _snapshotTotalSupplyExact | Internal 🔒 |   | |
+| **SnapshotEngineOwnable2Step** | Implementation | SnapshotEngineBase, Ownable2Step |||
+| └ | <Constructor> | Public ❗️ | 🛑  | SnapshotEngineBase Ownable |
+| └ | _authorizeSnapshot | Internal 🔒 | 🛑  | onlyOwner |
 
 
 ### Legend

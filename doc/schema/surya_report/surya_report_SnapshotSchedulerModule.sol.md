@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./modules/SnapshotSchedulerModule.sol | 4ffd4db5220b488d1b82b9d10774c3f3a92fdc5c |
+| ./modules/SnapshotSchedulerModule.sol | 6020b495032d9dd8e78d76ad566cfdea7df28b63 |
 
 
 ### Contracts Description Table
@@ -16,6 +16,7 @@
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
 | **SnapshotSchedulerModule** | Implementation | SnapshotBase, ISnapshotScheduler |||
+| └ | poke | Public ❗️ | 🛑  |NO❗️ |
 | └ | scheduleSnapshot | Public ❗️ | 🛑  |NO❗️ |
 | └ | scheduleSnapshotNotOptimized | Public ❗️ | 🛑  |NO❗️ |
 | └ | rescheduleSnapshot | Public ❗️ | 🛑  |NO❗️ |

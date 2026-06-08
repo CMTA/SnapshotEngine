@@ -2,13 +2,13 @@
 
 pragma solidity ^0.8.20;
 
-import {CMTATSnapshotBase} from "../base/CMTATSnapshotBase.sol";
+import {CMTATInternalSnapshotBase} from "../base/CMTATInternalSnapshotBase.sol";
 import {ICMTATConstructor} from "../../CMTAT/contracts/interfaces/technical/ICMTATConstructor.sol";
 
 /**
-* @title CMTAT version with Snapshot for a standalone deployment (without proxy)
+ * @title Local CMTAT deployment with internal snapshots for standalone use
 */
-contract CMTATStandaloneSnapshot is CMTATSnapshotBase {
+contract CMTATStandaloneInternalSnapshot is CMTATInternalSnapshotBase {
     /**
      * @notice Contract version for standalone deployment with snapshot support
      * @param admin address of the admin of contract (Access Control)

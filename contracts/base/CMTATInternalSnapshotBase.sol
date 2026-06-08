@@ -6,20 +6,23 @@ pragma solidity ^0.8.20;
 import {SnapshotSchedulerModule} from "../modules/SnapshotSchedulerModule.sol";
 import {SnapshotUpdateModule} from "../modules/SnapshotUpdateModule.sol";
 /* ==== CMTAT === */
+import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import {CMTATBaseCommon} from "../../CMTAT/contracts/modules/0_CMTATBaseCommon.sol";
-import {CMTATBaseRuleEngine} from "../../CMTAT/contracts/modules/2_CMTATBaseRuleEngine.sol";
+import {CMTATBaseRuleEngine} from "../../CMTAT/contracts/modules/3_CMTATBaseRuleEngine.sol";
 /* ==== Interfaces and library === */
 import {IERC20SnapshotCompatible} from "../interface/IERC20SnapshotCompatible.sol";
 import {ISnapshotState} from "../interface/ISnapshotState.sol";
 import {SnapshotStateInternal} from "../library/SnapshotStateInternal.sol";
 
-abstract contract CMTATSnapshotBase is
+abstract contract CMTATInternalSnapshotBase is
     SnapshotUpdateModule,
     SnapshotSchedulerModule,
     CMTATBaseRuleEngine,
     SnapshotStateInternal,
     ISnapshotState
 {
+    bytes32 public constant SNAPSHOOTER_ROLE = keccak256("SNAPSHOOTER_ROLE");
+
     /*//////////////////////////////////////////////////////////////
                          VIEW FUNCTIONS
     //////////////////////////////////////////////////////////////*/
@@ -92,9 +95,66 @@ abstract contract CMTATSnapshotBase is
         address from,
         address to,
         uint256 amount
-    ) internal virtual override(CMTATBaseCommon) {
+    ) internal virtual override(ERC20Upgradeable) {
         SnapshotUpdateModule._snapshotUpdate(from, to, balanceOf(from), balanceOf(to), totalSupply());
-        CMTATBaseCommon._update(from, to, amount);
+        ERC20Upgradeable._update(from, to, amount);
+    }
+
+    function transfer(address to, uint256 value)
+        public
+        virtual
+        override(CMTATBaseCommon)
+        returns (bool)
+    {
+        return CMTATBaseCommon.transfer(to, value);
+    }
+
+    function transferFrom(address from, address to, uint256 value)
+        public
+        virtual
+        override(CMTATBaseCommon)
+        returns (bool)
+    {
+        return CMTATBaseCommon.transferFrom(from, to, value);
+    }
+
+    function approve(address spender, uint256 value)
+        public
+        virtual
+        override(CMTATBaseRuleEngine)
+        returns (bool)
+    {
+        return CMTATBaseRuleEngine.approve(spender, value);
+    }
+
+    function decimals()
+        public
+        view
+        virtual
+        override(CMTATBaseCommon)
+        returns (uint8)
+    {
+        return CMTATBaseCommon.decimals();
+    }
+
+    function name()
+        public
+        view
+        virtual
+        override(CMTATBaseCommon)
+        returns (string memory)
+    {
+        return CMTATBaseCommon.name();
+    }
+
+    function symbol()
+        public
+        view
+        virtual
+        override(CMTATBaseCommon)
+        returns (string memory)
+    {
+        return CMTATBaseCommon.symbol();
     }
 
     function _authorizeSnapshot() internal virtual override onlyRole(SNAPSHOOTER_ROLE) {

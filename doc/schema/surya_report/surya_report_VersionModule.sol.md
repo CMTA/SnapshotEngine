@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./modules/VersionModule.sol | 2a970df8c7c4fdc6e1221dae435582bb4881b3d9 |
+| ./modules/VersionModule.sol | 35e39766f49d5c8becf78554836816c1e4e28c67 |
 
 
 ### Contracts Description Table
@@ -15,7 +15,7 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **VersionModule** | Implementation | IERC3643Base |||
+| **VersionModule** | Implementation | IERC3643Version |||
 | └ | version | Public ❗️ |   |NO❗️ |
 
 

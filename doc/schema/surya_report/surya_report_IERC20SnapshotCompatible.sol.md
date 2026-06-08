@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./library/SnapshotStateInternal.sol | 24e8f6b0f169beb77fb60d401e9d894840f52532 |
+| ./interface/IERC20SnapshotCompatible.sol | e274cc030ef5be9b59927f80160d790b2e5c0953 |
 
 
 ### Contracts Description Table
@@ -15,15 +15,9 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **SnapshotStateInternal** | Implementation | SnapshotBase |||
-| └ | _snapshotInfoBatch | Internal 🔒 |   | |
-| └ | _snapshotInfoBatch | Internal 🔒 |   | |
-| └ | _snapshotInfo | Internal 🔒 |   | |
-| └ | _isScheduledSnapshot | Internal 🔒 |   | |
-| └ | _snapshotBalanceOf | Internal 🔒 |   | |
-| └ | _snapshotTotalSupply | Internal 🔒 |   | |
-| └ | _snapshotBalanceOfExact | Internal 🔒 |   | |
-| └ | _snapshotTotalSupplyExact | Internal 🔒 |   | |
+| **IERC20SnapshotCompatible** | Interface |  |||
+| └ | balanceOf | External ❗️ |   |NO❗️ |
+| └ | totalSupply | External ❗️ |   |NO❗️ |
 
 
 ### Legend

@@ -21,8 +21,8 @@ The codebase is modular, allowing you to use or extend only the components you n
 
 - `SnapshotEngine` (`contracts/deployment/SnapshotEngine.sol`): external engine with AccessControl (`SNAPSHOOTER_ROLE`).
 - `SnapshotEngineOwnable2Step` (`contracts/deployment/SnapshotEngineOwnable2Step.sol`): external engine with Ownable2Step authorization.
-- `CMTATUpgradeableSnapshot` (`contracts/deployment/CMTATUpgradeableSnapshot.sol`): snapshot logic integrated in CMTAT upgradeable deployment.
-- `CMTATStandaloneSnapshot` (`contracts/deployment/CMTATStandaloneSnapshot.sol`): snapshot logic integrated in CMTAT standalone deployment.
+- `CMTATUpgradeableInternalSnapshot` (`contracts/deployment/CMTATUpgradeableInternalSnapshot.sol`): internal snapshot logic integrated in a local CMTAT upgradeable deployment.
+- `CMTATStandaloneInternalSnapshot` (`contracts/deployment/CMTATStandaloneInternalSnapshot.sol`): internal snapshot logic integrated in a local CMTAT standalone deployment.
 
 ## Table of Contents
 
@@ -98,18 +98,34 @@ interface ISnapshotEngine {
 
 During each ERC-20 transfer, before updating the balances and total supply, your contract must call the function `operateOnTransfer` which is the entrypoint for the SnapshotEngine.
 
+#### How to set it
 
+For a CMTAT deployment that supports an external snapshot engine, deploy the CMTAT snapshot-enabled variant from the `CMTAT` repository, deploy `SnapshotEngine` or `SnapshotEngineOwnable2Step` with the token address, then call `setSnapshotEngine` on the token to bind the engine.
+
+The local `CMTATUpgradeableInternalSnapshot` and `CMTATStandaloneInternalSnapshot` contracts in this repository are not used for that flow. They are internal-snapshot-only deployment variants.
+
+#### Compatibility
+
+| SnapshotEngine version | CMTAT Compatible Versions |
+| ---------------------- | ------------------- |
+| `v0.4.0`  (unaudited) | v3.0.0, v3.1.0, v3.2.0<br />v.3.3.0 (CMTAT Snapshot + Debt) |
+| `v0.3.0` (unaudited)   | v3.0.0, v3.1.0, v3.2.0                                      |
+| ``v0.2.0`(unaudited)   | v3.0.0-rc7                                                  |
 
 ### CMTAT deployment version
 
 This repository also contains CMTAT deployment versions with the required snapshot modules integrated:
 
-- `CMTATUpgradeableSnapshot` for proxy deployment.
-- `CMTATStandaloneSnapshot` for non-proxy deployment (initialized through constructor).
+- `CMTATUpgradeableInternalSnapshot` for proxy deployment.
+- `CMTATStandaloneInternalSnapshot` for non-proxy deployment (initialized through constructor).
 
 The CMTAT features are included by inheriting from the CMTAT base contract `CMTATBaseRuleEngine` and overriding the internal `update` function (from OpenZeppelin’s ERC20) to call `_snapshotUpdate`. This internal function is responsible for updating balances and total supply whenever a snapshot is detected.
 
 For each ERC-20 transfer, the `_update` function is called, and a snapshot is materialized when required. Since the snapshot logic is integrated directly into the token, there is no need for an external `SnapshotEngine` contract.
+
+These local deployment variants intentionally do not include `CMTATBaseSnapshot` / `setSnapshotEngine` support. That combination pushed the deployment bytecode above the EVM smart contract size limit, so the local `CMTAT*Snapshot` contracts are now internal-snapshot-only variants.
+
+If you need a CMTAT token that is wired to an external snapshot engine through `setSnapshotEngine`, use the snapshot-enabled deployment variants provided in the `CMTAT` repository instead of the local `CMTATUpgradeableInternalSnapshot` / `CMTATStandaloneInternalSnapshot` contracts from this repository.
 
 ![CMTATUpgradeableSnapshotUML](./doc/schema/UML/CMTATUpgradeableSnapshotUML.png)
 

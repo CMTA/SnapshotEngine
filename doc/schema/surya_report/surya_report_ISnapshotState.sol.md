@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./interface/ISnapshotState.sol | f879a0912e76d058d285ceb9c2ca3add9f09ac74 |
+| ./interface/ISnapshotState.sol | c5327096413dd45a11187794bae07343d0580593 |
 
 
 ### Contracts Description Table
@@ -16,8 +16,11 @@
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
 | **ISnapshotState** | Interface |  |||
+| └ | snapshotExists | External ❗️ |   |NO❗️ |
 | └ | snapshotBalanceOf | External ❗️ |   |NO❗️ |
+| └ | snapshotBalanceOfExact | External ❗️ |   |NO❗️ |
 | └ | snapshotTotalSupply | External ❗️ |   |NO❗️ |
+| └ | snapshotTotalSupplyExact | External ❗️ |   |NO❗️ |
 | └ | snapshotInfo | External ❗️ |   |NO❗️ |
 | └ | snapshotInfoBatch | External ❗️ |   |NO❗️ |
 | └ | snapshotInfoBatch | External ❗️ |   |NO❗️ |
