@@ -1,5 +1,8 @@
 const { ethers } = require('hardhat')
 const {
+  registerCmtatInternalSnapshotBasePassThroughSuites
+} = require('./CMTATInternalSnapshotBase.behavior')
+const {
   registerSnapshotCommonSuites
 } = require('./ERC20SnapshotModuleCommon/registerSnapshotCommonSuites')
 const {
@@ -32,4 +35,5 @@ describe('SnapshotEngine CMTAT Standalone', function () {
   })
 
   registerSnapshotCommonSuites()
+  registerCmtatInternalSnapshotBasePassThroughSuites()
 })

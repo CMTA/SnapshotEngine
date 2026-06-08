@@ -1,4 +1,7 @@
 const {
+  registerCmtatInternalSnapshotBasePassThroughSuites
+} = require('./CMTATInternalSnapshotBase.behavior')
+const {
   registerSnapshotCommonSuites
 } = require('./ERC20SnapshotModuleCommon/registerSnapshotCommonSuites')
 const { ethers, upgrades } = require('hardhat')
@@ -34,4 +37,5 @@ describe('CMTAT Internal Snapshot Upgradeable', function () {
     this.transferEngineMock = this.cmtat
   })
   registerSnapshotCommonSuites()
+  registerCmtatInternalSnapshotBasePassThroughSuites()
 })
