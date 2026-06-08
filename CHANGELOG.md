@@ -55,6 +55,7 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
 - Changed
   - Bump `VersionModule.VERSION` and deployment test expectations to `0.4.0`.
   - Switch `SnapshotEngine` from OpenZeppelin `AccessControl` to `AccessControlEnumerable`.
+  - Align `ISnapshotScheduler` license header and pragma with the local interface conventions used across the repository.
   - Remove `CMTATBaseSnapshot` support from local `CMTATUpgradeableInternalSnapshot` and `CMTATStandaloneInternalSnapshot` so these deployment variants only support internal snapshots.
   - Keep external `SnapshotEngine` support separate from the local CMTAT deployment variants because combining both paths exceeds the EVM contract size limit.
   - Rename the local shared CMTAT snapshot base from `CMTATSnapshotBase` to `CMTATInternalSnapshotBase` to avoid confusion with upstream CMTAT snapshot contracts.
@@ -75,11 +76,13 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
   - Update README integration guidance to document the minimal token interface required by SnapshotEngine (`IERC20SnapshotCompatible`).
   - Clarify in `README.md` that local `CMTAT*InternalSnapshot` deployment contracts are internal-snapshot-only and that external snapshot-engine-enabled CMTAT deployments should come from the `CMTAT` repository snapshot variants.
   - Add a `SnapshotEngine` compatibility table and setup guidance for supported CMTAT target versions.
+  - Add standalone `v0.4.0` Slither and Aderyn feedback files and document the audit-report summary table in `README.md`.
 
 - Testing
   - Add tests for exact snapshot queries (scheduled vs non-scheduled timestamps and parity with legacy queries on scheduled timestamps).
   - Add tests for snapshot materialization event emission.
   - Add tests for `poke()` access control and idempotent behavior.
+  - Add coverage for `CMTATInternalSnapshotBase` passthrough overrides: `approve`, `transferFrom`, `decimals`, `name`, and `symbol`.
   - Add test coverage for `SnapshotUnschedule(time)` emission in `unscheduleSnapshotNotOptimized`.
   - Add a dedicated `SnapshotEngineOwnable2Step` test suite and share common snapshot behavior tests across AccessControl and Ownable variants.
   - Add a dedicated `CMTATStandaloneInternalSnapshot` test suite reusing the same shared snapshot behavior suites.

@@ -869,6 +869,15 @@ Please see [SECURITY.md](https://github.com/CMTA/CMTAT/blob/master/SECURITY.md) 
 
 This project is not audited !
 
+#### Audit report summary
+
+| Version | Tool | Report | Feedback | Notes |
+| --- | --- | --- | --- | --- |
+| `v0.4.0` | Slither | [slither-report.md](./doc/audits/tools/v0.4.0/slither-report.md) | [slither-feedback.md](./doc/audits/tools/v0.4.0/slither-feedback.md) | Raw report plus separate project feedback. |
+| `v0.4.0` | Aderyn | [aderyn-report.md](./doc/audits/tools/v0.4.0/aderyn-report.md) | [aderyn-feedback.md](./doc/audits/tools/v0.4.0/aderyn-feedback.md) | Raw report plus separate project feedback. |
+| `v0.3.0` | Slither | [slither-report.md](./doc/audits/tools/v0.3.0/slither-report.md) | Integrated in report | Legacy format with inline feedback in the report file. |
+| `v0.3.0` | Aderyn | [aderyn-report.md](./doc/audits/tools/v0.3.0/aderyn-report.md) | Integrated in report | Legacy format with inline feedback in the report file. |
+
 ### Tools
 
 #### [Slither](https://github.com/crytic/slither)
