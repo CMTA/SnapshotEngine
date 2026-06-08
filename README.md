@@ -114,22 +114,27 @@ The local `CMTATUpgradeableInternalSnapshot` and `CMTATStandaloneInternalSnapsho
 
 ### CMTAT deployment version
 
+#### Internal/integrated snapshots
+
 This repository also contains CMTAT deployment versions with the required snapshot modules integrated:
 
 - `CMTATUpgradeableInternalSnapshot` for proxy deployment.
+
+![surya_inheritance_CMTATUpgradeableInternalSnapshot.sol](./doc/schema/surya_inheritance/surya_inheritance_CMTATUpgradeableInternalSnapshot.sol.png)
+
 - `CMTATStandaloneInternalSnapshot` for non-proxy deployment (initialized through constructor).
 
-The CMTAT features are included by inheriting from the CMTAT base contract `CMTATBaseRuleEngine` and overriding the internal `update` function (from OpenZeppelin’s ERC20) to call `_snapshotUpdate`. This internal function is responsible for updating balances and total supply whenever a snapshot is detected.
+![surya_inheritance_CMTATStandaloneInternalSnapshot.sol](./doc/schema/surya_inheritance/surya_inheritance_CMTATStandaloneInternalSnapshot.sol.png)
 
-For each ERC-20 transfer, the `_update` function is called, and a snapshot is materialized when required. Since the snapshot logic is integrated directly into the token, there is no need for an external `SnapshotEngine` contract.
 
-These local deployment variants intentionally do not include `CMTATBaseSnapshot` / `setSnapshotEngine` support. That combination pushed the deployment bytecode above the EVM smart contract size limit, so the local `CMTAT*Snapshot` contracts are now internal-snapshot-only variants.
+
+- The CMTAT features are included by inheriting from the CMTAT base contract `CMTATBaseRuleEngine` and overriding the internal `update` function (from OpenZeppelin’s ERC20) to call `_snapshotUpdate`. This internal function is responsible for updating balances and total supply whenever a snapshot is detected.
+- For each ERC-20 transfer, the `_update` function is called, and a snapshot is materialized when required. Since the snapshot logic is integrated directly into the token, there is no need for an external `SnapshotEngine` contract.
+- These local deployment variants intentionally do not include `CMTATBaseSnapshot` / `setSnapshotEngine` support. That combination pushed the deployment bytecode above the EVM smart contract size limit, so the local `CMTAT*Snapshot` contracts are now internal-snapshot-only variants.
+
+#### CMTAT with SnapshotEngine (external)
 
 If you need a CMTAT token that is wired to an external snapshot engine through `setSnapshotEngine`, use the snapshot-enabled deployment variants provided in the `CMTAT` repository instead of the local `CMTATUpgradeableInternalSnapshot` / `CMTATStandaloneInternalSnapshot` contracts from this repository.
-
-![CMTATUpgradeableSnapshotUML](./doc/schema/UML/CMTATUpgradeableSnapshotUML.png)
-
-
 
 ## Schema
 
@@ -144,12 +149,6 @@ The main contract is `SnapshotEngine`
 ### Graph
 
 ![surya_graph_SnapshotEngine.sol](./doc/schema/surya_graph/surya_graph_SnapshotEngine.sol.png)
-
-
-
-### UML
-
-![SnapshotEngineUML](./doc/schema/UML/SnapshotEngineUML.png)
 
 
 
@@ -187,28 +186,28 @@ Initially, we use an unordered list of snapshots, but this has a lot of disadvan
 
 ### Complexity
 
-| Name                                                         | Function                               | Description                                                  | Implemented [yes, no] | Complexity                                                   | Best case | Worst case  |
-| ------------------------------------------------------------ | -------------------------------------- | ------------------------------------------------------------ | --------------------- | ------------------------------------------------------------ | --------- | ----------- |
-| Schedule snasphot in the future, after all current snapshots | `scheduleSnapshot`                     | -                                                            | &#x2611;              | O(1)                                                         |           |             |
-| Schedule a snapshot at a random place in the future          | `scheduleSnapshotNotOptimized`         | -                                                            | &#x2611;              | O(N)                                                         | O(1)      | O(N)        |
-| Schedule snasphot in the past                                | -                                      | -                                                            | &#x2612;              | O(N)                                                         | O(1)      | O(N)        |
-| Reschedule a snapshot (in the future)                        | `_rescheduleSnapshot`                  | The new time is in the range between the previous snapshot and the next snapshot | &#x2611;              | O(1)                                                         |           |             |
-| Reschedule a snapshot (in the future)                        | -                                      | The new time can be after or before another existent snapshot | &#x2612;              | O(N)                                                         | O(1)      | O(N)        |
-| Reschedule a snapshot (in the past)                          | -                                      | The new time can be in the past                              | &#x2612;              | -                                                            |           |             |
-| Unschedule the last snapshot                                 | `_unscheduleSnapshot`                  | -                                                            | &#x2611;              | O(1)                                                         |           |             |
-| Unschedule a random snapshot in the past                     | `_unscheduleNotOptimized`              | -                                                            | &#x2611;              | O(N)                                                         | O(1)      | O(N)        |
-| Unschedule a random snapshot in the future                   | `_unscheduleNotOptimized `             | -                                                            | &#x2611;              | O(N)                                                         | O(1)      | O(N)        |
-| Set the current snapshot                                     | `_setCurrentSnapshot`                  | -                                                            | &#x2611;              | Same as `_findScheduledMostRecentPastSnapshot`               |           |             |
-| Update snapshots of the balance of an account                | `_updateAccountSnapshot`               | -                                                            | &#x2611;              | Same as `_updateSnapshot`                                    |           |             |
-| Update snapshots of the total Supply                         | `_updateTotalSupplySnapshot`           | -                                                            | &#x2611;              | Same as `_updateSnapshot`                                    |           |             |
-| Get the last snapshot time inside a snapshot ids array       | `_lastSnapshot`                        | -                                                            | &#x2611;              | O(1)                                                         |           |             |
-| Find a snapshot                                              | `_findScheduledSnapshotIndex`          | Find the snapshot index at the specified time                | &#x2611;              | O(log2(N)) 		<br />We use a binary search to find the value at the specified time |           |             |
-| Find the mot recent past snapshot                            | `_findScheduledMostRecentPastSnapshot` | -                                                            | &#x2611;              | O(1) 		<br />We only have a O(N) complexity (worst case) if all next scheduled snapshot are situated in the past but no update of the current snapshot has been made. | O(1)      | O(N) <br /> |
-| Update balance and/or total supply snapshots before the values are 		modified | `_update` <br /><br />`transferred`    | Call before each transfer. 		  			 It is very important to have a low complexity because this 		function is called very often. | &#x2611;              | The complexity depends of th functions `_setCurrentSnapshot` 		`_updateAccountSnapshot`		`_updateTotalSupplySnapshot` |           |             |
-| Get the next scheduled snapshotd                             | `getNextSnapshots`                     | -                                                            | &#x2611;              | O(N) 		<br />Nevertheless, we maintain a pointer on the actual snapshot to avoid loop through past snapshot |           |             |
-| Get all snapshot                                             | `getAllSnapshots`                      | -                                                            | &#x2611;              | O(1) 		<br />We directly return the array              |           |             |
-| Get the balance of an tokenHolder st the time specified      | `snapshotBalanceOf`                    | Return the number of tokens owned by the given tokenHolder at the time when the snapshot with the given time was created. | &#x2611;              | O(log2(N)) 		<br />We use a binary search to find the value at the snapshot time |           |             |
-| Get the total supply at the time specified                   | `snapshotTotalSupply`                  | -                                                            | &#x2611;              | O(log2(N)) 		<br />We use a binary search to find the value at the snapshot time |           |             |
+| Name                                                         | Function                               | Description                                                  | Implemented [yes, no]                                        | Complexity                                                   | Best case | Worst case  |
+| ------------------------------------------------------------ | -------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | --------- | ----------- |
+| Schedule snasphot in the future, after all current snapshots | `scheduleSnapshot`                     | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(1)                                                         |           |             |
+| Schedule a snapshot at a random place in the future          | `scheduleSnapshotNotOptimized`         | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(N)                                                         | O(1)      | O(N)        |
+| Schedule snasphot in the past                                | -                                      | -                                                            | <strong><span style="color: #b00020;">&#x2718;</span></strong> | O(N)                                                         | O(1)      | O(N)        |
+| Reschedule a snapshot (in the future)                        | `_rescheduleSnapshot`                  | The new time is in the range between the previous snapshot and the next snapshot | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(1)                                                         |           |             |
+| Reschedule a snapshot (in the future)                        | -                                      | The new time can be after or before another existent snapshot | <strong><span style="color: #b00020;">&#x2718;</span></strong> | O(N)                                                         | O(1)      | O(N)        |
+| Reschedule a snapshot (in the past)                          | -                                      | The new time can be in the past                              | <strong><span style="color: #b00020;">&#x2718;</span></strong> | -                                                            |           |             |
+| Unschedule the last snapshot                                 | `_unscheduleSnapshot`                  | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(1)                                                         |           |             |
+| Unschedule a random snapshot in the past                     | `_unscheduleNotOptimized`              | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(N)                                                         | O(1)      | O(N)        |
+| Unschedule a random snapshot in the future                   | `_unscheduleNotOptimized `             | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(N)                                                         | O(1)      | O(N)        |
+| Set the current snapshot                                     | `_setCurrentSnapshot`                  | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | Same as `_findScheduledMostRecentPastSnapshot`               |           |             |
+| Update snapshots of the balance of an account                | `_updateAccountSnapshot`               | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | Same as `_updateSnapshot`                                    |           |             |
+| Update snapshots of the total Supply                         | `_updateTotalSupplySnapshot`           | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | Same as `_updateSnapshot`                                    |           |             |
+| Get the last snapshot time inside a snapshot ids array       | `_lastSnapshot`                        | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(1)                                                         |           |             |
+| Find a snapshot                                              | `_findScheduledSnapshotIndex`          | Find the snapshot index at the specified time                | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(log2(N)) 		<br />We use a binary search to find the value at the specified time |           |             |
+| Find the mot recent past snapshot                            | `_findScheduledMostRecentPastSnapshot` | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(1) 		<br />We only have a O(N) complexity (worst case) if all next scheduled snapshot are situated in the past but no update of the current snapshot has been made. | O(1)      | O(N) <br /> |
+| Update balance and/or total supply snapshots before the values are 		modified | `_update` <br /><br />`transferred`    | Call before each transfer. 		  			 It is very important to have a low complexity because this 		function is called very often. | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | The complexity depends of th functions `_setCurrentSnapshot` 		`_updateAccountSnapshot`		`_updateTotalSupplySnapshot` |           |             |
+| Get the next scheduled snapshotd                             | `getNextSnapshots`                     | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(N) 		<br />Nevertheless, we maintain a pointer on the actual snapshot to avoid loop through past snapshot |           |             |
+| Get all snapshot                                             | `getAllSnapshots`                      | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(1) 		<br />We directly return the array              |           |             |
+| Get the balance of an tokenHolder st the time specified      | `snapshotBalanceOf`                    | Return the number of tokens owned by the given tokenHolder at the time when the snapshot with the given time was created. | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(log2(N)) 		<br />We use a binary search to find the value at the snapshot time |           |             |
+| Get the total supply at the time specified                   | `snapshotTotalSupply`                  | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(log2(N)) 		<br />We use a binary search to find the value at the snapshot time |           |             |
 
 ## Schema
 
@@ -420,9 +419,7 @@ Get the next scheduled snapshots that have not yet been created.
 **Abstract contract for scheduling, rescheduling, and canceling snapshots.**
  Provides methods to manage snapshot times (expressed in seconds since epoch) with role-based access control via `SNAPSHOOTER_ROLE`.
 
-
-
-![SnapshotSchedulerUML](./doc/schema/UML/SnapshotSchedulerUML.png)
+![surya_inheritance_SnapshotSchedulerModule.sol](./doc/schema/surya_inheritance/surya_inheritance_SnapshotSchedulerModule.sol.png)
 
 ------
 
@@ -559,7 +556,7 @@ Cancels the creation of a scheduled snapshot at the given time (non-optimized ve
 **Minimal interface for contracts (e.g. SnapshotEngine or CMTAT) supporting historical balance and total supply queries using snapshots.**
  Provides read-only methods to retrieve account balances and total token supply at specific timestamps, either individually or in batch.
 
-![SnapshotStateUML](./doc/schema/UML/SnapshotStateUML.png)
+![surya_inheritance_SnapshotStateModule.sol](./doc/schema/surya_inheritance/surya_inheritance_SnapshotStateModule.sol.png)
 
 ------
 
@@ -717,9 +714,7 @@ Retrieves balances of multiple accounts at multiple snapshots, as well as the to
 
 ### VersionModule
 
-![VersionModuleUML](./doc/schema/UML/VersionModuleUML.png)
-
-
+![surya_inheritance_VersionModule.sol](./doc/schema/surya_inheritance/surya_inheritance_VersionModule.sol.png)
 
 ## Storage management (ERC-7201)
 
@@ -734,23 +729,21 @@ are the latest ones that we tested:
 
 - Development
 
-  - npm 10.2.5
+  - npm 11.11.0
   - Hardhat ^2.22.7
-  - Node 20.5.0
+  - Node v24.14.1
 
 - Compilation
 
-  - Solidity [v0.8.30](https://docs.soliditylang.org/en/v0.8.30/)
+  - Solidity [v0.8.34](https://docs.soliditylang.org/en/v0.8.34/)
 
-  - CMTAT [v3.2.0](https://github.com/CMTA/CMTAT/releases/tag/v3.2.0)
+  - CMTAT [v3.3.0-rc1](https://github.com/CMTA/CMTAT/releases/tag/v3.3.0-rc1)
 
   - OpenZeppelin
 
     - OpenZeppelin Contracts (Node.js module) [v5.6.1](https://github.com/OpenZeppelin/openzeppelin-contracts/releases/tag/v5.6.1) 
 
     - OpenZeppelin Contracts Upgradeable (Node.js module) [v5.6.1](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/releases/tag/v5.6.1) (to compile CMTAT)
-
-
 
 ### Installation
 

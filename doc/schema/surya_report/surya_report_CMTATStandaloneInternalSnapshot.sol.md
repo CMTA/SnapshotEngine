@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./deployment/CMTATUpgradeableSnapshot.sol | 81275c443a86283aee9e50d7b3e4d0dd72eed55a |
+| ./deployment/CMTATStandaloneInternalSnapshot.sol | 1f064883a044fe07b1e1fe58476df960a90f2dc6 |
 
 
 ### Contracts Description Table
@@ -15,7 +15,7 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **CMTATUpgradeableSnapshot** | Implementation | CMTATInternalSnapshotBase |||
+| **CMTATStandaloneInternalSnapshot** | Implementation | CMTATInternalSnapshotBase |||
 | └ | <Constructor> | Public ❗️ | 🛑  |NO❗️ |
 
 

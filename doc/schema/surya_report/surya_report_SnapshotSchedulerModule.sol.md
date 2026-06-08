@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./modules/SnapshotSchedulerModule.sol | 6020b495032d9dd8e78d76ad566cfdea7df28b63 |
+| ./modules/SnapshotSchedulerModule.sol | ee8b5e455b46fffa7233c59de1ab435799090124 |
 
 
 ### Contracts Description Table
@@ -16,12 +16,12 @@
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
 | **SnapshotSchedulerModule** | Implementation | SnapshotBase, ISnapshotScheduler |||
-| └ | poke | Public ❗️ | 🛑  |NO❗️ |
-| └ | scheduleSnapshot | Public ❗️ | 🛑  |NO❗️ |
-| └ | scheduleSnapshotNotOptimized | Public ❗️ | 🛑  |NO❗️ |
-| └ | rescheduleSnapshot | Public ❗️ | 🛑  |NO❗️ |
-| └ | unscheduleLastSnapshot | Public ❗️ | 🛑  |NO❗️ |
-| └ | unscheduleSnapshotNotOptimized | Public ❗️ | 🛑  |NO❗️ |
+| └ | poke | Public ❗️ | 🛑  | onlySnapshotManager |
+| └ | scheduleSnapshot | Public ❗️ | 🛑  | onlySnapshotManager |
+| └ | scheduleSnapshotNotOptimized | Public ❗️ | 🛑  | onlySnapshotManager |
+| └ | rescheduleSnapshot | Public ❗️ | 🛑  | onlySnapshotManager |
+| └ | unscheduleLastSnapshot | Public ❗️ | 🛑  | onlySnapshotManager |
+| └ | unscheduleSnapshotNotOptimized | Public ❗️ | 🛑  | onlySnapshotManager |
 | └ | _authorizeSnapshot | Internal 🔒 | 🛑  | |
 
 
