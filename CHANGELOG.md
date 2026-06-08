@@ -57,6 +57,7 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
   - Keep external `SnapshotEngine` support separate from the local CMTAT deployment variants because combining both paths exceeds the EVM contract size limit.
   - Rename the local shared CMTAT snapshot base from `CMTATSnapshotBase` to `CMTATInternalSnapshotBase` to avoid confusion with upstream CMTAT snapshot contracts.
   - Rename the local deployment contracts from `CMTATUpgradeableSnapshot` / `CMTATStandaloneSnapshot` to `CMTATUpgradeableInternalSnapshot` / `CMTATStandaloneInternalSnapshot` to avoid colliding with upstream CMTAT contract names.
+  - Convert snapshot scheduler authorization to a modifier-based gate that delegates to the internal `_authorizeSnapshot()` hook.
 
 - Documentation
   - Clarify and document the `0.3.0` known issue and `0.4.0` resolution for `getNextSnapshots()` arithmetic underflow when no future snapshots remain.
