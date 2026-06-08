@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+//SPDX-License-Identifier: MPL-2.0
+
+pragma solidity ^0.8.20;
 
 /// @title ISnapshotScheduler
 /// @notice Interface for scheduling, rescheduling, and canceling snapshots
