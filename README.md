@@ -186,6 +186,9 @@ Initially, we use an unordered list of snapshots, but this has a lot of disadvan
 
 ### Complexity
 
+> Warning
+> If a large backlog of scheduled snapshots becomes overdue before any transfer or `poke()` call materializes them, `_setCurrentSnapshot()` may need to scan too many past timestamps in a single transaction. In that case, token transfers, mints, burns, or `poke()` can run out of gas and revert until the backlog is handled. Avoid scheduling an excessively dense backlog of timestamps, and materialize snapshots regularly.
+
 | Name                                                         | Function                               | Description                                                  | Implemented [yes, no]                                        | Complexity                                                   | Best case | Worst case  |
 | ------------------------------------------------------------ | -------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | --------- | ----------- |
 | Schedule snasphot in the future, after all current snapshots | `scheduleSnapshot`                     | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(1)                                                         |           |             |
@@ -877,6 +880,12 @@ This project is not audited !
 | `v0.4.0` | Aderyn | [aderyn-report.md](./doc/audits/tools/v0.4.0/aderyn-report.md) | [aderyn-feedback.md](./doc/audits/tools/v0.4.0/aderyn-feedback.md) | Raw report plus separate project feedback. |
 | `v0.3.0` | Slither | [slither-report.md](./doc/audits/tools/v0.3.0/slither-report.md) | Integrated in report | Legacy format with inline feedback in the report file. |
 | `v0.3.0` | Aderyn | [aderyn-report.md](./doc/audits/tools/v0.3.0/aderyn-report.md) | Integrated in report | Legacy format with inline feedback in the report file. |
+
+#### AI Auditing tool
+
+| Version | Tool | Report | Feedback | Notes |
+| --- | --- | --- | --- | --- |
+| `v0.4.0` | Nethermind AuditAgent | [audit_agent_report_v0.4.0.pdf](./doc/audits/tools/v0.4.0/nethermind-audit-agent/audit_agent_report_v0.4.0.pdf) | [audit_agent_feedback_v0.4.0.md](./doc/audits/tools/v0.4.0/nethermind-audit-agent/audit_agent_feedback_v0.4.0.md) | AI-generated scan report with separate project feedback. |
 
 ### Tools
 

@@ -82,6 +82,8 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
   - Clarify in `README.md` that local `CMTAT*InternalSnapshot` deployment contracts are internal-snapshot-only and that external snapshot-engine-enabled CMTAT deployments should come from the `CMTAT` repository snapshot variants.
   - Add a `SnapshotEngine` compatibility table and setup guidance for supported CMTAT target versions.
   - Add standalone `v0.4.0` Slither and Aderyn feedback files and document the audit-report summary table in `README.md`.
+  - Add a standalone `v0.4.0` Nethermind AuditAgent feedback file and an `AI Auditing tool` summary table in `README.md`.
+  - Add a README warning about overdue snapshot backlog growth potentially causing `poke()` and transfer-hook transactions to run out of gas.
 
 - Testing
   - Add tests for exact snapshot queries (scheduled vs non-scheduled timestamps and parity with legacy queries on scheduled timestamps).
