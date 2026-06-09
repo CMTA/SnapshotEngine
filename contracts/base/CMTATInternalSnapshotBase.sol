@@ -14,6 +14,10 @@ import {IERC20SnapshotCompatible} from "../interface/IERC20SnapshotCompatible.so
 import {ISnapshotState} from "../interface/ISnapshotState.sol";
 import {SnapshotStateInternal} from "../library/SnapshotStateInternal.sol";
 
+/**
+ * @title CMTATInternalSnapshotBase
+ * @notice Shared base for CMTAT deployments with integrated internal snapshot scheduling, state queries, and update hooks.
+ */
 abstract contract CMTATInternalSnapshotBase is
     SnapshotUpdateModule,
     SnapshotSchedulerModule,

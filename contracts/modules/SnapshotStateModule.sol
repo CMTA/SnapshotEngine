@@ -6,7 +6,10 @@ import {IERC20SnapshotCompatible} from "../interface/IERC20SnapshotCompatible.so
 import {SnapshotStateInternal} from "../library/SnapshotStateInternal.sol";
 import {ISnapshotState} from "../interface/ISnapshotState.sol";
 
-
+/**
+ * @title SnapshotStateModule
+ * @notice Exposes public snapshot read functions for balances, total supply, and batch snapshot queries.
+ */
 abstract contract SnapshotStateModule is SnapshotStateInternal, ISnapshotState  {
     IERC20SnapshotCompatible internal immutable erc20;
 

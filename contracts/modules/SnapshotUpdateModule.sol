@@ -3,6 +3,11 @@
 pragma solidity ^0.8.20;
 
 import {SnapshotBase} from "../library/SnapshotBase.sol";
+
+/**
+ * @title SnapshotUpdateModule
+ * @notice Updates snapshot state before token balances or total supply are modified.
+ */
 abstract contract SnapshotUpdateModule is SnapshotBase {
     /** 
     * @dev Update balance and/or total supply snapshots before the values are modified. This is implemented

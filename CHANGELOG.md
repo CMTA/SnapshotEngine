@@ -48,6 +48,13 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
 - Changed
   - Bump `VersionModule.VERSION` and deployment test expectations to `0.5.0`.
 
+- Documentation
+  - Add short contract-level NatSpec title/description blocks to the module and base contracts.
+  - Add a short inheritance explanation for `SnapshotEngine` in the README schema section.
+  - Add a matching README schema subsection for `SnapshotEngineOwnable2Step`, including inheritance and graph references.
+  - Add a README `Events` section summarizing the snapshot events emitted by the external-engine and internal CMTAT deployment variants.
+  - Fix the README table of contents and rename the duplicate `Schema` heading for the function-diagram section to `Function Schemas`.
+
 - Testing
   - Add a compatibility test covering simultaneous use of the external `SnapshotEngine` and the upstream CMTAT mock rule engine on the same token deployment.
 
@@ -87,6 +94,7 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
   - Add standalone `v0.4.0` Slither and Aderyn feedback files and document the audit-report summary table in `README.md`.
   - Add a standalone `v0.4.0` Nethermind AuditAgent feedback file and an `AI Auditing tool` summary table in `README.md`.
   - Add a README warning about overdue snapshot backlog growth potentially causing `poke()` and transfer-hook transactions to run out of gas.
+  - Add short descriptions to the README schema diagrams for the main scheduling/query flows.
 
 - Testing
   - Add tests for exact snapshot queries (scheduled vs non-scheduled timestamps and parity with legacy queries on scheduled timestamps).

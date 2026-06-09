@@ -26,12 +26,16 @@ The codebase is modular, allowing you to use or extend only the components you n
 
 ## Table of Contents
 
+- [Repository notes](#repository-notes)
+- [Deployment variants](#deployment-variants)
+- [Quick start](#quick-start)
 - [When to use it](#when-to-use-it)
 - [How to include it](#how-to-include-it)
 - [CMTAT deployment version](#cmtat-deployment-version)
 - [Schema](#schema)
 - [Technical](#technical)
 - [Access Control](#access-control)
+- [Events](#events)
 - [Ethereum API](#ethereum-api)
 - [Storage management (ERC-7201)](#storage-management-erc-7201)
 - [Usage instructions](#usage-instructions)
@@ -108,6 +112,7 @@ The local `CMTATUpgradeableInternalSnapshot` and `CMTATStandaloneInternalSnapsho
 
 | SnapshotEngine version | CMTAT Compatible Versions |
 | ---------------------- | ------------------- |
+| `v0.5.0`  (unaudited) | v3.0.0, v3.1.0, v3.2.0<br />v.3.3.0 (CMTAT Snapshot + Debt) |
 | `v0.4.0`  (unaudited) | v3.0.0, v3.1.0, v3.2.0<br />v.3.3.0 (CMTAT Snapshot + Debt) |
 | `v0.3.0` (unaudited)   | v3.0.0, v3.1.0, v3.2.0                                      |
 | ``v0.2.0`(unaudited)   | v3.0.0-rc7                                                  |
@@ -138,17 +143,35 @@ If you need a CMTAT token that is wired to an external snapshot engine through `
 
 ## Schema
 
+### SnapshotEngine
+
 The main contract is `SnapshotEngine`
 
-### Inheritance
+#### Inheritance
+
+`SnapshotEngine` is a thin deployment wrapper. `SnapshotEngineBase` provides the shared snapshot logic (state reads, scheduling, update hooks, versioning, and bound-token checks), `AccessControlEnumerable` provides role-based authorization, and `SnapshotEngine` itself wires the two together by defining `SNAPSHOOTER_ROLE`, granting the initial admin role, and implementing `_authorizeSnapshot()`.
 
 ![surya_inheritance_SnapshotEngine.sol](./doc/schema/surya_inheritance/surya_inheritance_SnapshotEngine.sol.png)
 
 
 
-### Graph
+#### Graph
 
 ![surya_graph_SnapshotEngine.sol](./doc/schema/surya_graph/surya_graph_SnapshotEngine.sol.png)
+
+### SnapshotEngineOwnable2Step
+
+The alternative ownable deployment contract is `SnapshotEngineOwnable2Step`
+
+#### Inheritance
+
+`SnapshotEngineOwnable2Step` is also a thin deployment wrapper. `SnapshotEngineBase` provides the shared snapshot logic (state reads, scheduling, update hooks, versioning, and bound-token checks), `Ownable2Step` provides two-step ownership management, and `SnapshotEngineOwnable2Step` wires the two together by setting the initial owner in the constructor and implementing `_authorizeSnapshot()` with `onlyOwner`.
+
+![surya_inheritance_SnapshotEngineOwnable2Step.sol](./doc/schema/surya_inheritance/surya_inheritance_SnapshotEngineOwnable2Step.sol.png)
+
+#### Graph
+
+![surya_graph_SnapshotEngineOwnable2Step.sol](./doc/schema/surya_graph/surya_graph_SnapshotEngineOwnable2Step.sol.png)
 
 
 
@@ -212,23 +235,31 @@ Initially, we use an unordered list of snapshots, but this has a lot of disadvan
 | Get the balance of an tokenHolder st the time specified      | `snapshotBalanceOf`                    | Return the number of tokens owned by the given tokenHolder at the time when the snapshot with the given time was created. | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(log2(N)) 		<br />We use a binary search to find the value at the snapshot time |           |             |
 | Get the total supply at the time specified                   | `snapshotTotalSupply`                  | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(log2(N)) 		<br />We use a binary search to find the value at the snapshot time |           |             |
 
-## Schema
+## Function Schemas
 
 Here are several schema to explain the main functions
 
 ### Get next snapshot
 
+Shows how the engine computes and returns the list of future scheduled snapshot timestamps.
+
 ![SnpashotModule-Schema-getNextSnapshot.drawio](./doc/technical/schema/png/SnpashotModule-Schema-getNextSnapshot.drawio.png)
 
 ### Schedule a snapshot
+
+Shows how a new future snapshot timestamp is validated and inserted into the schedule.
 
 ![SnpashotModule-Schema-scheduleSnapshot.drawio](./doc/technical/schema/png/SnpashotModule-Schema-scheduleSnapshot.drawio.png)
 
 ### Reschedule a snapshot
 
+Shows how an existing scheduled snapshot is moved to a new valid timestamp.
+
 ![SnpashotModule-Schema-rescheduleSnapshot.drawio](./doc/technical/schema/png/SnpashotModule-Schema-rescheduleSnapshot.drawio.png)
 
 ### Unschedule a snapshot
+
+Shows how a scheduled snapshot is removed from the schedule.
 
 ![SnpashotModule-Schema-unscheduleSnapshot.drawio](./doc/technical/schema/png/SnpashotModule-Schema-unscheduleSnapshot.drawio.png)
 
@@ -255,6 +286,31 @@ Here is the list of roles and their 32 bytes identifier.
 The ERC-20 token bound to SnapshotEngine is set at deployment and cannot be changed afterward.
 
 Only the bound token contract can call `operateOnTransfer` in `SnapshotEngine`.
+
+## Events
+
+The snapshot-related events are defined once in `ISnapshotBase` and emitted by the shared `SnapshotBase` logic.
+
+### SnapshotEngine and SnapshotEngineOwnable2Step
+
+These external engine deployments emit:
+
+- `SnapshotSchedule(oldTime, newTime)`: emitted when a snapshot is scheduled for the first time or rescheduled.
+- `SnapshotUnschedule(time)`: emitted when a scheduled snapshot is canceled.
+- `SnapshotMaterialized(time, blockNumber)`: emitted when a scheduled snapshot becomes the current materialized snapshot.
+
+### CMTATUpgradeableInternalSnapshot and CMTATStandaloneInternalSnapshot
+
+These integrated CMTAT deployments emit the same snapshot events through their inherited snapshot base logic:
+
+- `SnapshotSchedule(oldTime, newTime)`
+- `SnapshotUnschedule(time)`
+- `SnapshotMaterialized(time, blockNumber)`
+
+### Notes
+
+- The same event names and parameters are used across the external-engine and internal-snapshot deployment variants.
+- Additional ERC-20 / CMTAT events may also be emitted by the integrated token deployments through upstream CMTAT modules, but those are outside the SnapshotEngine-specific event set described here.
 
 ## Ethereum API
 
@@ -424,6 +480,10 @@ Get the next scheduled snapshots that have not yet been created.
 
 ![surya_inheritance_SnapshotSchedulerModule.sol](./doc/schema/surya_inheritance/surya_inheritance_SnapshotSchedulerModule.sol.png)
 
+![SnapshotSchedulerModuleUML](./doc/schema/UML/SnapshotSchedulerModuleUML.png)
+
+
+
 ------
 
 #### Functions
@@ -560,6 +620,8 @@ Cancels the creation of a scheduled snapshot at the given time (non-optimized ve
  Provides read-only methods to retrieve account balances and total token supply at specific timestamps, either individually or in batch.
 
 ![surya_inheritance_SnapshotStateModule.sol](./doc/schema/surya_inheritance/surya_inheritance_SnapshotStateModule.sol.png)
+
+![SnapshotStateModuleUML](./doc/schema/UML/SnapshotStateModuleUML.png)
 
 ------
 
@@ -916,8 +978,8 @@ You can find a prototype to distribute on-chain dividend based on on-chain snaps
 - [Taurus - Equity Tokenization: How to Pay Dividend On-Chain Using CMTAT](https://www.taurushq.com/blog/equity-tokenization-how-to-pay-dividend-on-chain-using-cmtat/)
 - [CMTAT IncomeVault](https://github.com/CMTA/IncomeVault)
 
-Note that this project used snapshots when they were performed directly inside CMTAT, see [CMTAT v2.4.0](https://github.com/CMTA/CMTAT/releases/tag/v2.4.0), not through the `SnapshotEngine` but the principle is similar.
+Note that this project used snapshots performed directly inside CMTAT (internal/integrated), see [CMTAT v2.4.0](https://github.com/CMTA/CMTAT/releases/tag/v2.4.0), not through the `SnapshotEngine` but the principle is similar.
 
 ## Intellectual property
 
-The code is copyright (c) Capital Market and Technology Association, 2018-2025, and is released under [Mozilla Public License 2.0](./LICENSE.md).
+The code is copyright (c) Capital Market and Technology Association, 2018-2026, and is released under [Mozilla Public License 2.0](./LICENSE.md).

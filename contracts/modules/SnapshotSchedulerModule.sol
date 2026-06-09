@@ -5,6 +5,11 @@ pragma solidity ^0.8.20;
 /* ==== Library === */
 import {SnapshotBase} from "../library/SnapshotBase.sol";
 import {ISnapshotScheduler} from "../interface/ISnapshotScheduler.sol";
+
+/**
+ * @title SnapshotSchedulerModule
+ * @notice Exposes authorized snapshot scheduling, rescheduling, unscheduling, and materialization entrypoints.
+ */
 abstract contract SnapshotSchedulerModule is SnapshotBase, ISnapshotScheduler {
     /*//////////////////////////////////////////////////////////////
                                MODIFIERS

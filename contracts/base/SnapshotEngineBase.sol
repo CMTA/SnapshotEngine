@@ -13,6 +13,10 @@ import {VersionModule} from "../modules/VersionModule.sol";
 import {IERC20SnapshotCompatible} from "../interface/IERC20SnapshotCompatible.sol";
 import {Errors} from "../library/Errors.sol";
 
+/**
+ * @title SnapshotEngineBase
+ * @notice Shared base for external snapshot engine deployments bound to a compatible ERC-20 token.
+ */
 abstract contract SnapshotEngineBase is SnapshotStateModule, SnapshotUpdateModule, SnapshotSchedulerModule, VersionModule, ISnapshotEngine {
     /* ==== Modifier === */
     modifier onlyBoundToken() {
