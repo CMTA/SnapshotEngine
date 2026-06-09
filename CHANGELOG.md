@@ -45,6 +45,9 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
 
 ## 0.5.0
 
+- Changed
+  - Bump `VersionModule.VERSION` and deployment test expectations to `0.5.0`.
+
 - Testing
   - Add a compatibility test covering simultaneous use of the external `SnapshotEngine` and the upstream CMTAT mock rule engine on the same token deployment.
 
