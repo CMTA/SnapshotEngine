@@ -83,6 +83,7 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
   - Add tests for snapshot materialization event emission.
   - Add tests for `poke()` access control and idempotent behavior.
   - Add coverage for `CMTATInternalSnapshotBase` passthrough overrides: `approve`, `transferFrom`, `decimals`, `name`, and `symbol`.
+  - Add a compatibility test covering simultaneous use of the external `SnapshotEngine` and the upstream CMTAT mock rule engine on the same token deployment.
   - Add test coverage for `SnapshotUnschedule(time)` emission in `unscheduleSnapshotNotOptimized`.
   - Add a dedicated `SnapshotEngineOwnable2Step` test suite and share common snapshot behavior tests across AccessControl and Ownable variants.
   - Add a dedicated `CMTATStandaloneInternalSnapshot` test suite reusing the same shared snapshot behavior suites.
