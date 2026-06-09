@@ -947,7 +947,7 @@ This project is not audited !
 
 | Version | Tool | Report | Feedback | Notes |
 | --- | --- | --- | --- | --- |
-| `v0.4.0` | Nethermind AuditAgent | [audit_agent_report_v0.4.0.pdf](./doc/audits/tools/v0.4.0/nethermind-audit-agent/audit_agent_report_v0.4.0.pdf) | [audit_agent_feedback_v0.4.0.md](./doc/audits/tools/v0.4.0/nethermind-audit-agent/audit_agent_feedback_v0.4.0.md) | AI-generated scan report with separate project feedback. |
+| `v0.4.0` | [Nethermind AuditAgent](https://auditagent.nethermind.io/) | [audit_agent_report_v0.4.0.pdf](./doc/audits/tools/v0.4.0/nethermind-audit-agent/audit_agent_report_v0.4.0.pdf) | [audit_agent_feedback_v0.4.0.md](./doc/audits/tools/v0.4.0/nethermind-audit-agent/audit_agent_feedback_v0.4.0.md) | AI-generated scan report with separate project feedback. |
 
 ### Tools
 
