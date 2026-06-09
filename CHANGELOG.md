@@ -54,6 +54,7 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
   - Add a matching README schema subsection for `SnapshotEngineOwnable2Step`, including inheritance and graph references.
   - Add a README `Events` section summarizing the snapshot events emitted by the external-engine and internal CMTAT deployment variants.
   - Fix the README table of contents and rename the duplicate `Schema` heading for the function-diagram section to `Function Schemas`.
+  - Add the current deployed sizes of the main external-engine and local CMTAT internal snapshot deployment contracts to the README.
 
 - Testing
   - Add a compatibility test covering simultaneous use of the external `SnapshotEngine` and the upstream CMTAT mock rule engine on the same token deployment.

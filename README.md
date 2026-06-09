@@ -24,6 +24,13 @@ The codebase is modular, allowing you to use or extend only the components you n
 - `CMTATUpgradeableInternalSnapshot` (`contracts/deployment/CMTATUpgradeableInternalSnapshot.sol`): internal snapshot logic integrated in a local CMTAT upgradeable deployment.
 - `CMTATStandaloneInternalSnapshot` (`contracts/deployment/CMTATStandaloneInternalSnapshot.sol`): internal snapshot logic integrated in a local CMTAT standalone deployment.
 
+Current deployed sizes of the main local deployment contracts:
+
+- `SnapshotEngine`: `8.772 KiB`
+- `SnapshotEngineOwnable2Step`: `7.387 KiB`
+- `CMTATUpgradeableInternalSnapshot`: `23.963 KiB`
+- `CMTATStandaloneInternalSnapshot`: `23.963 KiB`
+
 ## Table of Contents
 
 - [Repository notes](#repository-notes)
