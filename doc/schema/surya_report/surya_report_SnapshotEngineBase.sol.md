@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./CMTATUpgradeableSnapshot.sol | 230f0c32c4698a9b1c90ae1b09e462a15910021e |
+| ./base/SnapshotEngineBase.sol | 3885d52adbdbee3fe32dad6d3119ed407fdede70 |
 
 
 ### Contracts Description Table
@@ -15,15 +15,9 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **CMTATUpgradeableSnapshot** | Implementation | SnapshotUpdateModule, SnapshotSchedulerModule, CMTATBaseRuleEngine, SnapshotStateInternal, ISnapshotState |||
+| **SnapshotEngineBase** | Implementation | SnapshotStateModule, SnapshotUpdateModule, SnapshotSchedulerModule, VersionModule, ISnapshotEngine |||
 | └ | <Constructor> | Public ❗️ | 🛑  |NO❗️ |
-| └ | snapshotInfo | Public ❗️ |   |NO❗️ |
-| └ | snapshotInfoBatch | Public ❗️ |   |NO❗️ |
-| └ | snapshotInfoBatch | Public ❗️ |   |NO❗️ |
-| └ | snapshotBalanceOf | Public ❗️ |   |NO❗️ |
-| └ | snapshotTotalSupply | Public ❗️ |   |NO❗️ |
-| └ | _update | Internal 🔒 | 🛑  | |
-| └ | _authorizeSnapshot | Internal 🔒 | 🛑  | onlyRole |
+| └ | operateOnTransfer | Public ❗️ | 🛑  | onlyBoundToken |
 
 
 ### Legend

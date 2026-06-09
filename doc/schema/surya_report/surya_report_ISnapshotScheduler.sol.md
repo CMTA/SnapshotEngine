@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./interface/ISnapshotScheduler.sol | 668fe4cff9b78f0a5332b3cee113ec1ebd0248e4 |
+| ./interface/ISnapshotScheduler.sol | 773e04367a7970facfa34047911823f97c754675 |
 
 
 ### Contracts Description Table
@@ -16,6 +16,7 @@
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
 | **ISnapshotScheduler** | Interface |  |||
+| └ | poke | External ❗️ | 🛑  |NO❗️ |
 | └ | scheduleSnapshot | External ❗️ | 🛑  |NO❗️ |
 | └ | scheduleSnapshotNotOptimized | External ❗️ | 🛑  |NO❗️ |
 | └ | rescheduleSnapshot | External ❗️ | 🛑  |NO❗️ |

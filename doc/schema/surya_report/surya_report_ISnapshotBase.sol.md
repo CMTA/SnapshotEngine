@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./interface/ISnapshotBase.sol | a7f684ec3f557a54b93470a43726384d17c711b8 |
+| ./interface/ISnapshotBase.sol | a6ec8ee9b8c1b1dde305b1a6903a063438d0435f |
 
 
 ### Contracts Description Table

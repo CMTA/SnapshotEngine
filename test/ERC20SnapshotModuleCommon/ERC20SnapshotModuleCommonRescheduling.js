@@ -1,6 +1,8 @@
 const { time } = require('@nomicfoundation/hardhat-network-helpers')
 const { expect } = require('chai')
-const { SNAPSHOOTER_ROLE } = require('../utils')
+const {
+  expectUnauthorizedSnapshotAdmin
+} = require('./ERC20SnapshotModuleUtils/authorization')
 const {
   checkArraySnapshot
 } = require('./ERC20SnapshotModuleUtils/ERC20SnapshotModuleUtils')
@@ -132,16 +134,13 @@ function ERC20SnapshotModuleCommonRescheduling () {
 
     it('reverts when calling from non-owner', async function () {
       // Act
-      await expect(
+      await expectUnauthorizedSnapshotAdmin(
+        this,
         this.transferEngineMock
           .connect(this.address1)
-          .rescheduleSnapshot(this.snapshotTime, this.newSnapshotTime)
+          .rescheduleSnapshot(this.snapshotTime, this.newSnapshotTime),
+        this.address1
       )
-        .to.be.revertedWithCustomError(
-          this.transferEngineMock,
-          'AccessControlUnauthorizedAccount'
-        )
-        .withArgs(this.address1.address, SNAPSHOOTER_ROLE)
     })
 
     it('reverts when trying to reschedule a snapshot in the past', async function () {

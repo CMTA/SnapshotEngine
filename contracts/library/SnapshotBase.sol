@@ -83,7 +83,7 @@ abstract contract SnapshotBase is ISnapshotBase {
                 return $._scheduledSnapshots;
             } else {
                 // There are snapshots situated in the futur
-                if (indexLowerBound + 1 != $._scheduledSnapshots.length) {
+                if (indexLowerBound + 1 < $._scheduledSnapshots.length) {
                     // All next snapshots are located after the snapshot specified by indexLowerBound
                     uint256 arraySize = $._scheduledSnapshots.length -
                         indexLowerBound -
@@ -248,6 +248,7 @@ abstract contract SnapshotBase is ISnapshotBase {
         $._scheduledSnapshots = scheduledSnapshotLocal;
         // pop is only available for storage array
         $._scheduledSnapshots.pop();
+        emit SnapshotUnschedule(time);
     }
 
 
@@ -258,13 +259,15 @@ abstract contract SnapshotBase is ISnapshotBase {
     */
     function _setCurrentSnapshot() internal {
         SnapshotBaseStorage storage $ = _getSnapshotBaseStorage();
+        uint256 previousSnapshotTime = $._currentSnapshotTime;
         (
             uint256 scheduleSnapshotTime,
             uint256 scheduleSnapshotIndex
         ) = _findScheduledMostRecentPastSnapshot($);
-        if (scheduleSnapshotTime > 0) {
+        if (scheduleSnapshotTime > previousSnapshotTime) {
             $._currentSnapshotTime = scheduleSnapshotTime;
             $._currentSnapshotIndex = scheduleSnapshotIndex;
+            emit SnapshotMaterialized(scheduleSnapshotTime, block.number);
         }
     }
 
@@ -317,6 +320,24 @@ abstract contract SnapshotBase is ISnapshotBase {
             $._totalSupplySnapshots
         );
         return snapshotted ? value : totalSupply;
+    }
+
+    /**
+    * @dev Returns true when `time` is an exact scheduled snapshot timestamp.
+    */
+    function _snapshotExists(uint256 time) internal view returns (bool) {
+        SnapshotBaseStorage storage $ = _getSnapshotBaseStorage();
+        (bool isFound, ) = _findScheduledSnapshotIndex($, time);
+        return isFound;
+    }
+
+    /**
+    * @dev Reverts when `time` is not an exact scheduled snapshot timestamp.
+    */
+    function _requireSnapshotExists(uint256 time) internal view {
+        if (!_snapshotExists(time)) {
+            revert SnapshotEngine_SnapshotNotFound();
+        }
     }
 
     
@@ -428,7 +449,7 @@ abstract contract SnapshotBase is ISnapshotBase {
         // no snapshot or the current snapshot already points on the last snapshot
         if (
             currentArraySize == 0 ||
-            (($._currentSnapshotIndex + 1 == currentArraySize) && (time != 0))
+            (($._currentSnapshotIndex + 1 == currentArraySize) && ($._currentSnapshotTime != 0))
         ) {
             return (0, currentArraySize);
         }

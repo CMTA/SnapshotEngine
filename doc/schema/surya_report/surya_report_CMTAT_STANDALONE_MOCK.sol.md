@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./mock/CMTAT_STANDALONE_MOCK.sol | a73b481eed51a2b5ed9bbed4966ff4b303b5856e |
+| ./mock/CMTAT_STANDALONE_MOCK.sol | 660e51640c8b002f5c240852f3c3f89ab5a04680 |
 
 
 ### Contracts Description Table
@@ -15,8 +15,8 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **CMTAT_STANDALONE_MOCK** | Implementation | CMTATStandalone |||
-| └ | <Constructor> | Public ❗️ | 🛑  | CMTATStandalone |
+| **CMTAT_STANDALONE_MOCK** | Implementation | CMTATStandardStandalone |||
+| └ | <Constructor> | Public ❗️ | 🛑  | CMTATStandardStandalone |
 
 
 ### Legend

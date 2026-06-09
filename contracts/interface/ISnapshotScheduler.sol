@@ -1,9 +1,16 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+//SPDX-License-Identifier: MPL-2.0
+
+pragma solidity ^0.8.20;
 
 /// @title ISnapshotScheduler
 /// @notice Interface for scheduling, rescheduling, and canceling snapshots
 interface ISnapshotScheduler {
+    /**
+     * @notice Materialize the latest eligible scheduled snapshot (if any).
+     * @dev Access restricted to accounts with SNAPSHOOTER_ROLE.
+     */
+    function poke() external;
+
     /**
      * @notice Schedule a snapshot at the given time specified as a number of seconds since epoch.
      * @dev The time cannot be before the latest scheduled but not yet created snapshot.

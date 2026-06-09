@@ -4,15 +4,60 @@
 >
 > If you want to use this project, perform your own verification or send an email to [admin@cmta.ch](mailto:admin@cmta.ch).
 
-The **SnapshotEngine** is a smart contract designed to perform on-chain snapshots, making it easier to distribute dividends or other token-based rewards directly on-chain.
+The **SnapshotEngine** is a smart contract system designed to perform on-chain snapshots, making it easier to distribute dividends or other token-based rewards directly on-chain.
 
 It is intended to work with any standard ERC-20 token (for example, **CMTAT**).
 
 If you want to integrate it into another contract—such as one for distributing dividends—you can access balance and state information through the `ISnapshotState` interface, defined in `ISnapshotState.sol`.
 
-The codebase is modular, allowing you to use or extend only the components you need. Thus, instead of using the `SnapshotEngine`as an external contract called by the ERC-20 token, you can integrate the relevant modules directly in the token smart contract. This repository provides an example with CMTAT, see `CMTAT deployment version`.
+The codebase is modular, allowing you to use or extend only the components you need. Thus, instead of using the `SnapshotEngine` as an external contract called by the ERC-20 token, you can integrate the relevant modules directly in the token smart contract. This repository provides examples with CMTAT (upgradeable and standalone variants), see `CMTAT deployment version`.
 
-[TOC]
+## Repository Notes
+
+- `CMTAT/` is a git submodule and should be treated as external code.
+- Local changes in this repository should not modify code inside the `CMTAT/` submodule.
+
+## Deployment Variants
+
+- `SnapshotEngine` (`contracts/deployment/SnapshotEngine.sol`): external engine with AccessControlEnumerable (`SNAPSHOOTER_ROLE`).
+- `SnapshotEngineOwnable2Step` (`contracts/deployment/SnapshotEngineOwnable2Step.sol`): external engine with Ownable2Step authorization.
+- `CMTATUpgradeableInternalSnapshot` (`contracts/deployment/CMTATUpgradeableInternalSnapshot.sol`): internal snapshot logic integrated in a local CMTAT upgradeable deployment.
+- `CMTATStandaloneInternalSnapshot` (`contracts/deployment/CMTATStandaloneInternalSnapshot.sol`): internal snapshot logic integrated in a local CMTAT standalone deployment.
+
+Current deployed sizes of the main local deployment contracts:
+
+- `SnapshotEngine`: `8.772 KiB`
+- `SnapshotEngineOwnable2Step`: `7.387 KiB`
+- `CMTATUpgradeableInternalSnapshot`: `23.963 KiB`
+- `CMTATStandaloneInternalSnapshot`: `23.963 KiB`
+
+## Table of Contents
+
+- [Repository notes](#repository-notes)
+- [Deployment variants](#deployment-variants)
+- [Quick start](#quick-start)
+- [When to use it](#when-to-use-it)
+- [How to include it](#how-to-include-it)
+- [CMTAT deployment version](#cmtat-deployment-version)
+- [Schema](#schema)
+- [Technical](#technical)
+- [Access Control](#access-control)
+- [Events](#events)
+- [Ethereum API](#ethereum-api)
+- [Storage management (ERC-7201)](#storage-management-erc-7201)
+- [Usage instructions](#usage-instructions)
+- [Generate documentation](#generate-documentation)
+- [Security](#security)
+- [Further reading](#further-reading)
+- [Intellectual property](#intellectual-property)
+
+## Quick Start
+
+```bash
+npm install
+npx hardhat compile
+npx hardhat test
+```
 
 ### When to use it
 
@@ -29,6 +74,13 @@ In short:
 ### How to include it
 
 While it has been designed for the CMTAT, the `SnapshotEngine` can be used with other ERC-20 contracts to perform on-chain snapshots.
+
+For `SnapshotEngine` deployment, the bound token only needs to expose:
+
+- `balanceOf(address)`
+- `totalSupply()`
+
+This minimal requirement is captured by `IERC20SnapshotCompatible` in `contracts/interface/IERC20SnapshotCompatible.sol`.
 
 To use it, import in your contract the interface `ISnapshotEngine` which declares the function `operateOnTransfer`.
 
@@ -57,39 +109,76 @@ interface ISnapshotEngine {
 
 During each ERC-20 transfer, before updating the balances and total supply, your contract must call the function `operateOnTransfer` which is the entrypoint for the SnapshotEngine.
 
+#### How to set it
 
+For a CMTAT deployment that supports an external snapshot engine, deploy the CMTAT snapshot-enabled variant from the `CMTAT` repository, deploy `SnapshotEngine` or `SnapshotEngineOwnable2Step` with the token address, then call `setSnapshotEngine` on the token to bind the engine.
+
+The local `CMTATUpgradeableInternalSnapshot` and `CMTATStandaloneInternalSnapshot` contracts in this repository are not used for that flow. They are internal-snapshot-only deployment variants.
+
+#### Compatibility
+
+| SnapshotEngine version | CMTAT Compatible Versions |
+| ---------------------- | ------------------- |
+| `v0.5.0`  (unaudited) | v3.0.0, v3.1.0, v3.2.0<br />v.3.3.0 (CMTAT Snapshot + Debt) |
+| `v0.4.0`  (unaudited) | v3.0.0, v3.1.0, v3.2.0<br />v.3.3.0 (CMTAT Snapshot + Debt) |
+| `v0.3.0` (unaudited)   | v3.0.0, v3.1.0, v3.2.0                                      |
+| ``v0.2.0`(unaudited)   | v3.0.0-rc7                                                  |
 
 ### CMTAT deployment version
 
-This repository also contains a CMTAT deployment version with the required snapshot modules integrated called `CMTATUpgradeableSnapshot`.
+#### Internal/integrated snapshots
 
-The CMTAT features are included by inheriting from the CMTAT base contract `CMTATBaseRuleEngine` and overriding the internal `update` function (from OpenZeppelin’s ERC20) to call `_snapshotUpdate`. This internal function is responsible for updating balances and total supply whenever a snapshot is detected.
+This repository also contains CMTAT deployment versions with the required snapshot modules integrated:
 
-For each ERC-20 transfer, the `_update` function is called, and a snapshot is taken if required. Since the snapshot logic is integrated directly into the token, there is no need for an external `SnapshotEngine` contract.
+- `CMTATUpgradeableInternalSnapshot` for proxy deployment.
 
-![CMTATUpgradeableSnapshotUML](./doc/schema/UML/CMTATUpgradeableSnapshotUML.png)
+![surya_inheritance_CMTATUpgradeableInternalSnapshot.sol](./doc/schema/surya_inheritance/surya_inheritance_CMTATUpgradeableInternalSnapshot.sol.png)
+
+- `CMTATStandaloneInternalSnapshot` for non-proxy deployment (initialized through constructor).
+
+![surya_inheritance_CMTATStandaloneInternalSnapshot.sol](./doc/schema/surya_inheritance/surya_inheritance_CMTATStandaloneInternalSnapshot.sol.png)
 
 
+
+- The CMTAT features are included by inheriting from the CMTAT base contract `CMTATBaseRuleEngine` and overriding the internal `update` function (from OpenZeppelin’s ERC20) to call `_snapshotUpdate`. This internal function is responsible for updating balances and total supply whenever a snapshot is detected.
+- For each ERC-20 transfer, the `_update` function is called, and a snapshot is materialized when required. Since the snapshot logic is integrated directly into the token, there is no need for an external `SnapshotEngine` contract.
+- These local deployment variants intentionally do not include `CMTATBaseSnapshot` / `setSnapshotEngine` support. That combination pushed the deployment bytecode above the EVM smart contract size limit, so the local `CMTAT*Snapshot` contracts are now internal-snapshot-only variants.
+
+#### CMTAT with SnapshotEngine (external)
+
+If you need a CMTAT token that is wired to an external snapshot engine through `setSnapshotEngine`, use the snapshot-enabled deployment variants provided in the `CMTAT` repository instead of the local `CMTATUpgradeableInternalSnapshot` / `CMTATStandaloneInternalSnapshot` contracts from this repository.
 
 ## Schema
 
+### SnapshotEngine
+
 The main contract is `SnapshotEngine`
 
-### Inheritance
+#### Inheritance
+
+`SnapshotEngine` is a thin deployment wrapper. `SnapshotEngineBase` provides the shared snapshot logic (state reads, scheduling, update hooks, versioning, and bound-token checks), `AccessControlEnumerable` provides role-based authorization, and `SnapshotEngine` itself wires the two together by defining `SNAPSHOOTER_ROLE`, granting the initial admin role, and implementing `_authorizeSnapshot()`.
 
 ![surya_inheritance_SnapshotEngine.sol](./doc/schema/surya_inheritance/surya_inheritance_SnapshotEngine.sol.png)
 
 
 
-### Graph
+#### Graph
 
 ![surya_graph_SnapshotEngine.sol](./doc/schema/surya_graph/surya_graph_SnapshotEngine.sol.png)
 
+### SnapshotEngineOwnable2Step
 
+The alternative ownable deployment contract is `SnapshotEngineOwnable2Step`
 
-### UML
+#### Inheritance
 
-![SnapshotEngineUML](./doc/schema/UML/SnapshotEngineUML.png)
+`SnapshotEngineOwnable2Step` is also a thin deployment wrapper. `SnapshotEngineBase` provides the shared snapshot logic (state reads, scheduling, update hooks, versioning, and bound-token checks), `Ownable2Step` provides two-step ownership management, and `SnapshotEngineOwnable2Step` wires the two together by setting the initial owner in the constructor and implementing `_authorizeSnapshot()` with `onlyOwner`.
+
+![surya_inheritance_SnapshotEngineOwnable2Step.sol](./doc/schema/surya_inheritance/surya_inheritance_SnapshotEngineOwnable2Step.sol.png)
+
+#### Graph
+
+![surya_graph_SnapshotEngineOwnable2Step.sol](./doc/schema/surya_graph/surya_graph_SnapshotEngineOwnable2Step.sol.png)
 
 
 
@@ -127,50 +216,68 @@ Initially, we use an unordered list of snapshots, but this has a lot of disadvan
 
 ### Complexity
 
-| Name                                                         | Function                               | Description                                                  | Implemented [yes, no] | Complexity                                                   | Best case | Worst case  |
-| ------------------------------------------------------------ | -------------------------------------- | ------------------------------------------------------------ | --------------------- | ------------------------------------------------------------ | --------- | ----------- |
-| Schedule snasphot in the future, after all current snapshots | `scheduleSnapshot`                     | -                                                            | &#x2611;              | O(1)                                                         |           |             |
-| Schedule a snapshot at a random place in the future          | `scheduleSnapshotNotOptimized`         | -                                                            | &#x2611;              | O(N)                                                         | O(1)      | O(N)        |
-| Schedule snasphot in the past                                | -                                      | -                                                            | &#x2612;              | O(N)                                                         | O(1)      | O(N)        |
-| Reschedule a snapshot (in the future)                        | `_rescheduleSnapshot`                  | The new time is in the range between the previous snapshot and the next snapshot | &#x2611;              | O(1)                                                         |           |             |
-| Reschedule a snapshot (in the future)                        | -                                      | The new time can be after or before another existent snapshot | &#x2612;              | O(N)                                                         | O(1)      | O(N)        |
-| Reschedule a snapshot (in the past)                          | -                                      | The new time can be in the past                              | &#x2612;              | -                                                            |           |             |
-| Unschedule the last snapshot                                 | `_unscheduleSnapshot`                  | -                                                            | &#x2611;              | O(1)                                                         |           |             |
-| Unschedule a random snapshot in the past                     | `_unscheduleNotOptimized`              | -                                                            | &#x2611;              | O(N)                                                         | O(1)      | O(N)        |
-| Unschedule a random snapshot in the future                   | `_unscheduleNotOptimized `             | -                                                            | &#x2611;              | O(N)                                                         | O(1)      | O(N)        |
-| Set the current snapshot                                     | `_setCurrentSnapshot`                  | -                                                            | &#x2611;              | Same as `_findScheduledMostRecentPastSnapshot`               |           |             |
-| Update snapshots of the balance of an account                | `_updateAccountSnapshot`               | -                                                            | &#x2611;              | Same as `_updateSnapshot`                                    |           |             |
-| Update snapshots of the total Supply                         | `_updateTotalSupplySnapshot`           | -                                                            | &#x2611;              | Same as `_updateSnapshot`                                    |           |             |
-| Get the last snapshot time inside a snapshot ids array       | `_lastSnapshot`                        | -                                                            | &#x2611;              | O(1)                                                         |           |             |
-| Find a snapshot                                              | `_findScheduledSnapshotIndex`          | Find the snapshot index at the specified time                | &#x2611;              | O(log2(N)) 		<br />We use a binary search to find the value at the specified time |           |             |
-| Find the mot recent past snapshot                            | `_findScheduledMostRecentPastSnapshot` | -                                                            | &#x2611;              | O(1) 		<br />We only have a O(N) complexity (worst case) if all next scheduled snapshot are situated in the past but no update of the current snapshot has been made. | O(1)      | O(N) <br /> |
-| Update balance and/or total supply snapshots before the values are 		modified | `_update` <br /><br />`transferred`    | Call before each transfer. 		  			 It is very important to have a low complexity because this 		function is called very often. | &#x2611;              | The complexity depends of th functions `_setCurrentSnapshot` 		`_updateAccountSnapshot`		`_updateTotalSupplySnapshot` |           |             |
-| Get the next scheduled snapshotd                             | `getNextSnapshots`                     | -                                                            | &#x2611;              | O(N) 		<br />Nevertheless, we maintain a pointer on the actual snapshot to avoid loop through past snapshot |           |             |
-| Get all snapshot                                             | `getAllSnapshots`                      | -                                                            | &#x2611;              | O(1) 		<br />We directly return the array              |           |             |
-| Get the balance of an tokenHolder st the time specified      | `snapshotBalanceOf`                    | Return the number of tokens owned by the given tokenHolder at the time when the snapshot with the given time was created. | &#x2611;              | O(log2(N)) 		<br />We use a binary search to find the value at the snapshot time |           |             |
-| Get the total supply at the time specified                   | `snapshotTotalSupply`                  | -                                                            | &#x2611;              | O(log2(N)) 		<br />We use a binary search to find the value at the snapshot time |           |             |
+> Warning
+> If a large backlog of scheduled snapshots becomes overdue before any transfer or `poke()` call materializes them, `_setCurrentSnapshot()` may need to scan too many past timestamps in a single transaction. In that case, token transfers, mints, burns, or `poke()` can run out of gas and revert until the backlog is handled. Avoid scheduling an excessively dense backlog of timestamps, and materialize snapshots regularly.
 
-## Schema
+| Name                                                         | Function                               | Description                                                  | Implemented [yes, no]                                        | Complexity                                                   | Best case | Worst case  |
+| ------------------------------------------------------------ | -------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | --------- | ----------- |
+| Schedule snasphot in the future, after all current snapshots | `scheduleSnapshot`                     | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(1)                                                         |           |             |
+| Schedule a snapshot at a random place in the future          | `scheduleSnapshotNotOptimized`         | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(N)                                                         | O(1)      | O(N)        |
+| Schedule snasphot in the past                                | -                                      | -                                                            | <strong><span style="color: #b00020;">&#x2718;</span></strong> | O(N)                                                         | O(1)      | O(N)        |
+| Reschedule a snapshot (in the future)                        | `_rescheduleSnapshot`                  | The new time is in the range between the previous snapshot and the next snapshot | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(1)                                                         |           |             |
+| Reschedule a snapshot (in the future)                        | -                                      | The new time can be after or before another existent snapshot | <strong><span style="color: #b00020;">&#x2718;</span></strong> | O(N)                                                         | O(1)      | O(N)        |
+| Reschedule a snapshot (in the past)                          | -                                      | The new time can be in the past                              | <strong><span style="color: #b00020;">&#x2718;</span></strong> | -                                                            |           |             |
+| Unschedule the last snapshot                                 | `_unscheduleSnapshot`                  | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(1)                                                         |           |             |
+| Unschedule a random snapshot in the past                     | `_unscheduleNotOptimized`              | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(N)                                                         | O(1)      | O(N)        |
+| Unschedule a random snapshot in the future                   | `_unscheduleNotOptimized `             | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(N)                                                         | O(1)      | O(N)        |
+| Set the current snapshot                                     | `_setCurrentSnapshot`                  | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | Same as `_findScheduledMostRecentPastSnapshot`               |           |             |
+| Update snapshots of the balance of an account                | `_updateAccountSnapshot`               | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | Same as `_updateSnapshot`                                    |           |             |
+| Update snapshots of the total Supply                         | `_updateTotalSupplySnapshot`           | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | Same as `_updateSnapshot`                                    |           |             |
+| Get the last snapshot time inside a snapshot ids array       | `_lastSnapshot`                        | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(1)                                                         |           |             |
+| Find a snapshot                                              | `_findScheduledSnapshotIndex`          | Find the snapshot index at the specified time                | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(log2(N)) 		<br />We use a binary search to find the value at the specified time |           |             |
+| Find the mot recent past snapshot                            | `_findScheduledMostRecentPastSnapshot` | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(1) 		<br />We only have a O(N) complexity (worst case) if all next scheduled snapshot are situated in the past but no update of the current snapshot has been made. | O(1)      | O(N) <br /> |
+| Update balance and/or total supply snapshots before the values are 		modified | `_update` <br /><br />`transferred`    | Call before each transfer. 		  			 It is very important to have a low complexity because this 		function is called very often. | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | The complexity depends of th functions `_setCurrentSnapshot` 		`_updateAccountSnapshot`		`_updateTotalSupplySnapshot` |           |             |
+| Get the next scheduled snapshotd                             | `getNextSnapshots`                     | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(N) 		<br />Nevertheless, we maintain a pointer on the actual snapshot to avoid loop through past snapshot |           |             |
+| Get all snapshot                                             | `getAllSnapshots`                      | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(1) 		<br />We directly return the array              |           |             |
+| Get the balance of an tokenHolder st the time specified      | `snapshotBalanceOf`                    | Return the number of tokens owned by the given tokenHolder at the time when the snapshot with the given time was created. | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(log2(N)) 		<br />We use a binary search to find the value at the snapshot time |           |             |
+| Get the total supply at the time specified                   | `snapshotTotalSupply`                  | -                                                            | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | O(log2(N)) 		<br />We use a binary search to find the value at the snapshot time |           |             |
+
+## Function Schemas
 
 Here are several schema to explain the main functions
 
 ### Get next snapshot
 
+Shows how the engine computes and returns the list of future scheduled snapshot timestamps.
+
 ![SnpashotModule-Schema-getNextSnapshot.drawio](./doc/technical/schema/png/SnpashotModule-Schema-getNextSnapshot.drawio.png)
 
 ### Schedule a snapshot
+
+Shows how a new future snapshot timestamp is validated and inserted into the schedule.
 
 ![SnpashotModule-Schema-scheduleSnapshot.drawio](./doc/technical/schema/png/SnpashotModule-Schema-scheduleSnapshot.drawio.png)
 
 ### Reschedule a snapshot
 
+Shows how an existing scheduled snapshot is moved to a new valid timestamp.
+
 ![SnpashotModule-Schema-rescheduleSnapshot.drawio](./doc/technical/schema/png/SnpashotModule-Schema-rescheduleSnapshot.drawio.png)
 
 ### Unschedule a snapshot
 
+Shows how a scheduled snapshot is removed from the schedule.
+
 ![SnpashotModule-Schema-unscheduleSnapshot.drawio](./doc/technical/schema/png/SnpashotModule-Schema-unscheduleSnapshot.drawio.png)
 
 ## Access Control
+
+Two authorization models are available depending on deployment:
+
+- `SnapshotEngine`: role-based access control via `SNAPSHOOTER_ROLE`.
+- `SnapshotEngineOwnable2Step`: owner-only access via `onlyOwner`.
+
+Integrated CMTAT snapshot deployments use CMTAT role-based access control for snapshot scheduling functions.
 
 #### RBAC Role list
 
@@ -183,9 +290,34 @@ Here is the list of roles and their 32 bytes identifier.
 
 ### ERC-20 token bound
 
-The ERC-20 bounds to the Snapshot Engine is set at deployment and can not be changed after that.
+The ERC-20 token bound to SnapshotEngine is set at deployment and cannot be changed afterward.
 
-Only the ERC-20 token contract can called the function `operateOnTransfer` defined in the main contract `SnapshotEngine`.
+Only the bound token contract can call `operateOnTransfer` in `SnapshotEngine`.
+
+## Events
+
+The snapshot-related events are defined once in `ISnapshotBase` and emitted by the shared `SnapshotBase` logic.
+
+### SnapshotEngine and SnapshotEngineOwnable2Step
+
+These external engine deployments emit:
+
+- `SnapshotSchedule(oldTime, newTime)`: emitted when a snapshot is scheduled for the first time or rescheduled.
+- `SnapshotUnschedule(time)`: emitted when a scheduled snapshot is canceled.
+- `SnapshotMaterialized(time, blockNumber)`: emitted when a scheduled snapshot becomes the current materialized snapshot.
+
+### CMTATUpgradeableInternalSnapshot and CMTATStandaloneInternalSnapshot
+
+These integrated CMTAT deployments emit the same snapshot events through their inherited snapshot base logic:
+
+- `SnapshotSchedule(oldTime, newTime)`
+- `SnapshotUnschedule(time)`
+- `SnapshotMaterialized(time, blockNumber)`
+
+### Notes
+
+- The same event names and parameters are used across the external-engine and internal-snapshot deployment variants.
+- Additional ERC-20 / CMTAT events may also be emitted by the integrated token deployments through upstream CMTAT modules, but those are outside the SnapshotEngine-specific event set described here.
 
 ## Ethereum API
 
@@ -353,19 +485,37 @@ Get the next scheduled snapshots that have not yet been created.
 **Abstract contract for scheduling, rescheduling, and canceling snapshots.**
  Provides methods to manage snapshot times (expressed in seconds since epoch) with role-based access control via `SNAPSHOOTER_ROLE`.
 
+![surya_inheritance_SnapshotSchedulerModule.sol](./doc/schema/surya_inheritance/surya_inheritance_SnapshotSchedulerModule.sol.png)
+
+![SnapshotSchedulerModuleUML](./doc/schema/UML/SnapshotSchedulerModuleUML.png)
 
 
-![SnapshotSchedulerUML](./doc/schema/UML/SnapshotSchedulerUML.png)
 
 ------
 
 #### Functions
 
+##### poke()
+
+```solidity
+function poke() public
+```
+
+Materializes the latest eligible scheduled snapshot (if any), without requiring an ERC-20 transfer.
+
+**Details:**
+
+- Useful when no transfer/mint/burn occurs around a scheduled record date.
+- Access is restricted by deployment mode:
+`SNAPSHOOTER_ROLE` for `SnapshotEngine`, `onlyOwner` for `SnapshotEngineOwnable2Step`.
+
+------
+
 ##### scheduleSnapshot(uint256)
 
 ```solidity
 function scheduleSnapshot(uint256 time) 
-public onlyRole(SNAPSHOOTER_ROLE)
+public
 ```
 
 Schedules a snapshot at the given time (in seconds since epoch).
@@ -387,7 +537,7 @@ Schedules a snapshot at the given time (in seconds since epoch).
 
 ```solidity
 function scheduleSnapshotNotOptimized(uint256 time) 
-public onlyRole(SNAPSHOOTER_ROLE)
+public
 ```
 
 Schedules a snapshot at the given time (non-optimized version).
@@ -409,7 +559,7 @@ Schedules a snapshot at the given time (non-optimized version).
 
 ```solidity
 function rescheduleSnapshot(uint256 oldTime,uint256 newTime) 
-public onlyRole(SNAPSHOOTER_ROLE)
+public
 ```
 
 Reschedules a snapshot from `oldTime` to `newTime`.
@@ -432,7 +582,7 @@ Reschedules a snapshot from `oldTime` to `newTime`.
 
 ```solidity
 function unscheduleLastSnapshot(uint256 time) 
-public onlyRole(SNAPSHOOTER_ROLE)
+public
 ```
 
 Cancels the creation of the last scheduled snapshot at the given time.
@@ -454,7 +604,7 @@ Cancels the creation of the last scheduled snapshot at the given time.
 
 ```solidity
 function unscheduleSnapshotNotOptimized(uint256 time) 
-public onlyRole(SNAPSHOOTER_ROLE)
+public
 ```
 
 Cancels the creation of a scheduled snapshot at the given time (non-optimized version).
@@ -476,7 +626,9 @@ Cancels the creation of a scheduled snapshot at the given time (non-optimized ve
 **Minimal interface for contracts (e.g. SnapshotEngine or CMTAT) supporting historical balance and total supply queries using snapshots.**
  Provides read-only methods to retrieve account balances and total token supply at specific timestamps, either individually or in batch.
 
-![SnapshotStateUML](./doc/schema/UML/SnapshotStateUML.png)
+![surya_inheritance_SnapshotStateModule.sol](./doc/schema/surya_inheritance/surya_inheritance_SnapshotStateModule.sol.png)
+
+![SnapshotStateModuleUML](./doc/schema/UML/SnapshotStateModuleUML.png)
 
 ------
 
@@ -486,7 +638,7 @@ Cancels the creation of a scheduled snapshot at the given time (non-optimized ve
 
 ```solidity
 function snapshotBalanceOf(uint256 time,address tokenHolder) 
-external view returns (uint256 tokenHolderBalance);
+public view returns (uint256 tokenHolderBalance);
 ```
 
 Gets the balance of a specific account at the snapshot corresponding to a given timestamp.
@@ -506,12 +658,26 @@ Gets the balance of a specific account at the snapshot corresponding to a given 
 
 ------
 
+##### snapshotBalanceOfExact(uint256, address) -> (uint256)
+
+```solidity
+function snapshotBalanceOfExact(uint256 time, address tokenHolder)
+public view returns (uint256 tokenHolderBalance);
+```
+
+Gets the balance at an exact scheduled snapshot timestamp.
+
+**Details:**
+
+- Reverts with `SnapshotEngine_SnapshotNotFound` if `time` is not an exact scheduled snapshot.
+
+------
+
 ##### snapshotTotalSupply(uint256) ->  (uint256)
 
 ```solidity
 function snapshotTotalSupply(uint256 time) 
-public view override(ISnapshotState) 
-returns (uint256 totalSupply)
+public view returns (uint256 totalSupply)
 ```
 
 Gets the total token supply at the snapshot corresponding to a given timestamp.
@@ -521,6 +687,21 @@ Gets the total token supply at the snapshot corresponding to a given timestamp.
 | Name | Type    | Description                                      |
 | ---- | ------- | ------------------------------------------------ |
 | time | uint256 | The timestamp identifying the snapshot to query. |
+
+------
+
+##### snapshotTotalSupplyExact(uint256) -> (uint256)
+
+```solidity
+function snapshotTotalSupplyExact(uint256 time)
+public view returns (uint256 totalSupply);
+```
+
+Gets the total supply at an exact scheduled snapshot timestamp.
+
+**Details:**
+
+- Reverts with `SnapshotEngine_SnapshotNotFound` if `time` is not an exact scheduled snapshot.
 
 **Return Values:**
 
@@ -534,8 +715,7 @@ Gets the total token supply at the snapshot corresponding to a given timestamp.
 
 ```solidity
 function snapshotInfo(uint256 time, address tokenHolder) 
-public view override(ISnapshotState) 
-returns (uint256 tokenHolderBalance, uint256 totalSupply)
+public view returns (uint256 tokenHolderBalance, uint256 totalSupply)
 ```
 
 Retrieves both an account's balance and the total supply at the snapshot for a given timestamp in a single call.
@@ -560,8 +740,7 @@ Retrieves both an account's balance and the total supply at the snapshot for a g
 
 ```solidity
 function snapshotInfoBatch(uint256 time, address[] calldata addresses) 
-public view override(ISnapshotState) 
-returns (uint256[] memory tokenHolderBalances, uint256 totalSupply)
+public view returns (uint256[] memory tokenHolderBalances, uint256 totalSupply)
 ```
 
 Retrieves balances of multiple accounts and the total supply at a snapshot for a given timestamp in a single call.
@@ -586,8 +765,7 @@ Retrieves balances of multiple accounts and the total supply at a snapshot for a
 
 ```solidity
 function snapshotInfoBatch(uint256[] calldata times, address[] calldata addresses) 
-public view override(ISnapshotState) 
-returns (uint256[][] memory tokenHolderBalances, uint256[] memory totalSupply)
+public view returns (uint256[][] memory tokenHolderBalances, uint256[] memory totalSupply)
 ```
 
 Retrieves balances of multiple accounts at multiple snapshots, as well as the total supply at each snapshot.
@@ -608,13 +786,11 @@ Retrieves balances of multiple accounts at multiple snapshots, as well as the to
 
 ### VersionModule
 
-![VersionModuleUML](./doc/schema/UML/VersionModuleUML.png)
-
-
+![surya_inheritance_VersionModule.sol](./doc/schema/surya_inheritance/surya_inheritance_VersionModule.sol.png)
 
 ## Storage management (ERC-7201)
 
-While SnapshotEngine can not be deployed with a proxy, modules implement [ERC-7201](https://eips.ethereum.org/EIPS/eip-7201) to allow them to be directly used by a potential CMTAT deployment version.
+While SnapshotEngine cannot be deployed with a proxy, modules implement [ERC-7201](https://eips.ethereum.org/EIPS/eip-7201) to allow direct reuse by CMTAT deployment variants.
 
 ## Usage instructions
 
@@ -625,23 +801,21 @@ are the latest ones that we tested:
 
 - Development
 
-  - npm 10.2.5
+  - npm 11.11.0
   - Hardhat ^2.22.7
-  - Node 20.5.0
+  - Node v24.14.1
 
 - Compilation
 
-  - Solidity [v0.8.30](https://docs.soliditylang.org/en/v0.8.30/)
+  - Solidity [v0.8.34](https://docs.soliditylang.org/en/v0.8.34/)
 
-  - CMTAT [v3.0.0](https://github.com/CMTA/CMTAT/releases/tag/v3.0.0)
+  - CMTAT [v3.3.0-rc1](https://github.com/CMTA/CMTAT/releases/tag/v3.3.0-rc1)
 
   - OpenZeppelin
 
-    - OpenZeppelin Contracts (Node.js module) [v5.4.0](https://github.com/OpenZeppelin/openzeppelin-contracts/releases/tag/v5.4.0) 
+    - OpenZeppelin Contracts (Node.js module) [v5.6.1](https://github.com/OpenZeppelin/openzeppelin-contracts/releases/tag/v5.6.1) 
 
-    - OpenZeppelin Contracts Upgradeable (Node.js module) [v5.4.0](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/releases/tag/v5.4.0) (to compile CMTAT)
-
-
+    - OpenZeppelin Contracts Upgradeable (Node.js module) [v5.6.1](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/releases/tag/v5.6.1) (to compile CMTAT)
 
 ### Installation
 
@@ -696,7 +870,7 @@ The script calls the plugin [hardhat-contract-sizer](https://www.npmjs.com/packa
 
 #### Testing
 
-Tests are written in JavaScript by using [web3js](https://web3js.readthedocs.io/en/v1.10.0/) and run **only** with Hardhat as follows:
+Tests are written in JavaScript using Hardhat + Ethers and run **only** with Hardhat as follows:
 
 `npx hardhat test`
 
@@ -767,6 +941,21 @@ Please see [SECURITY.md](https://github.com/CMTA/CMTAT/blob/master/SECURITY.md) 
 
 This project is not audited !
 
+#### Audit report summary
+
+| Version | Tool | Report | Feedback | Notes |
+| --- | --- | --- | --- | --- |
+| `v0.4.0` | Slither | [slither-report.md](./doc/audits/tools/v0.4.0/slither-report.md) | [slither-feedback.md](./doc/audits/tools/v0.4.0/slither-feedback.md) | Raw report plus separate project feedback. |
+| `v0.4.0` | Aderyn | [aderyn-report.md](./doc/audits/tools/v0.4.0/aderyn-report.md) | [aderyn-feedback.md](./doc/audits/tools/v0.4.0/aderyn-feedback.md) | Raw report plus separate project feedback. |
+| `v0.3.0` | Slither | [slither-report.md](./doc/audits/tools/v0.3.0/slither-report.md) | Integrated in report | Legacy format with inline feedback in the report file. |
+| `v0.3.0` | Aderyn | [aderyn-report.md](./doc/audits/tools/v0.3.0/aderyn-report.md) | Integrated in report | Legacy format with inline feedback in the report file. |
+
+#### AI Auditing tool
+
+| Version | Tool | Report | Feedback | Notes |
+| --- | --- | --- | --- | --- |
+| `v0.4.0` | [Nethermind AuditAgent](https://auditagent.nethermind.io/) | [audit_agent_report_v0.4.0.pdf](./doc/audits/tools/v0.4.0/nethermind-audit-agent/audit_agent_report_v0.4.0.pdf) | [audit_agent_feedback_v0.4.0.md](./doc/audits/tools/v0.4.0/nethermind-audit-agent/audit_agent_feedback_v0.4.0.md) | AI-generated scan report with separate project feedback. |
+
 ### Tools
 
 #### [Slither](https://github.com/crytic/slither)
@@ -796,8 +985,8 @@ You can find a prototype to distribute on-chain dividend based on on-chain snaps
 - [Taurus - Equity Tokenization: How to Pay Dividend On-Chain Using CMTAT](https://www.taurushq.com/blog/equity-tokenization-how-to-pay-dividend-on-chain-using-cmtat/)
 - [CMTAT IncomeVault](https://github.com/CMTA/IncomeVault)
 
-Note that this project used snapshots when they were performed directly inside CMTAT, see [CMTAT v2.4.0](https://github.com/CMTA/CMTAT/releases/tag/v2.4.0), not through the `SnapshotEngine` but the principle is similar.
+Note that this project used snapshots performed directly inside CMTAT (internal/integrated), see [CMTAT v2.4.0](https://github.com/CMTA/CMTAT/releases/tag/v2.4.0), not through the `SnapshotEngine` but the principle is similar.
 
 ## Intellectual property
 
-The code is copyright (c) Capital Market and Technology Association, 2018-2025, and is released under [Mozilla Public License 2.0](./LICENSE.md).
+The code is copyright (c) Capital Market and Technology Association, 2018-2026, and is released under [Mozilla Public License 2.0](./LICENSE.md).

@@ -384,7 +384,7 @@ function ERC20SnapshotModuleMultiplePlannedTest () {
         [ADDRESS1_INITIAL_MINT, ADDRESS2_INITIAL_MINT, ADDRESS3_INITIAL_MINT]
       )
       // Values at the time of the first snapshot
-      checkSnapshot.call(
+      await checkSnapshot.call(
         this,
         this.snapshotTime1,
         TOTAL_SUPPLY_INITIAL_MINT,

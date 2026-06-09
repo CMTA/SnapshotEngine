@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./library/SnapshotStateInternal.sol | 354f48fd93145b7eb70fa8585421771c1deab43b |
+| ./library/SnapshotStateInternal.sol | 24e8f6b0f169beb77fb60d401e9d894840f52532 |
 
 
 ### Contracts Description Table
@@ -19,8 +19,11 @@
 | └ | _snapshotInfoBatch | Internal 🔒 |   | |
 | └ | _snapshotInfoBatch | Internal 🔒 |   | |
 | └ | _snapshotInfo | Internal 🔒 |   | |
+| └ | _isScheduledSnapshot | Internal 🔒 |   | |
 | └ | _snapshotBalanceOf | Internal 🔒 |   | |
 | └ | _snapshotTotalSupply | Internal 🔒 |   | |
+| └ | _snapshotBalanceOfExact | Internal 🔒 |   | |
+| └ | _snapshotTotalSupplyExact | Internal 🔒 |   | |
 
 
 ### Legend

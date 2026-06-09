@@ -1,6 +1,8 @@
 const { time } = require('@nomicfoundation/hardhat-network-helpers')
 const { expect } = require('chai')
-const { SNAPSHOOTER_ROLE } = require('../utils')
+const {
+  expectUnauthorizedSnapshotAdmin
+} = require('./ERC20SnapshotModuleUtils/authorization')
 const {
   checkArraySnapshot
 } = require('./ERC20SnapshotModuleUtils/ERC20SnapshotModuleUtils')
@@ -29,14 +31,11 @@ function ERC20SnapshotModuleCommonScheduling () {
 
     it('reverts when calling from non-admin', async function () {
       const SNAPSHOT_TIME = this.currentTime + time.duration.seconds(60)
-      await expect(
-        this.transferEngineMock.connect(this.address1).scheduleSnapshot(SNAPSHOT_TIME)
+      await expectUnauthorizedSnapshotAdmin(
+        this,
+        this.transferEngineMock.connect(this.address1).scheduleSnapshot(SNAPSHOT_TIME),
+        this.address1
       )
-        .to.be.revertedWithCustomError(
-          this.transferEngineMock,
-          'AccessControlUnauthorizedAccount'
-        )
-        .withArgs(this.address1.address, SNAPSHOOTER_ROLE)
     })
 
     it('reverts when trying to schedule a snapshot before the last snapshot', async function () {
@@ -165,16 +164,13 @@ function ERC20SnapshotModuleCommonScheduling () {
 
     it('reverts when calling from non-admin', async function () {
       const SNAPSHOT_TIME = this.currentTime + time.duration.seconds(60)
-      await expect(
+      await expectUnauthorizedSnapshotAdmin(
+        this,
         this.transferEngineMock
           .connect(this.address1)
-          .scheduleSnapshotNotOptimized(SNAPSHOT_TIME)
+          .scheduleSnapshotNotOptimized(SNAPSHOT_TIME),
+        this.address1
       )
-        .to.be.revertedWithCustomError(
-          this.transferEngineMock,
-          'AccessControlUnauthorizedAccount'
-        )
-        .withArgs(this.address1.address, SNAPSHOOTER_ROLE)
     })
 
     it('reverts when trying to schedule a snapshot in the past', async function () {

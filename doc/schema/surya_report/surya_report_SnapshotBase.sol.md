@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./library/SnapshotBase.sol | 385c02bea5486ba60c68b22a91cfce159824e31f |
+| ./library/SnapshotBase.sol | 6af4125c0ed36eb5dabb74755b2a6aebe5a79594 |
 
 
 ### Contracts Description Table
@@ -28,6 +28,8 @@
 | └ | _updateTotalSupplySnapshot | Internal 🔒 | 🛑  | |
 | └ | _snapshotBalanceOf | Internal 🔒 |   | |
 | └ | _snapshotTotalSupply | Internal 🔒 |   | |
+| └ | _snapshotExists | Internal 🔒 |   | |
+| └ | _requireSnapshotExists | Internal 🔒 |   | |
 | └ | _updateSnapshot | Private 🔐 | 🛑  | |
 | └ | _valueAt | Private 🔐 |   | |
 | └ | _lastSnapshot | Private 🔐 |   | |

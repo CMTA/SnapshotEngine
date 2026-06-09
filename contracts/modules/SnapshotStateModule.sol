@@ -1,15 +1,17 @@
 //SPDX-License-Identifier: MPL-2.0
 
 pragma solidity ^0.8.20;
-/* ==== OpenZeppelin === */
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 /* ==== Interfaces and library === */
+import {IERC20SnapshotCompatible} from "../interface/IERC20SnapshotCompatible.sol";
 import {SnapshotStateInternal} from "../library/SnapshotStateInternal.sol";
 import {ISnapshotState} from "../interface/ISnapshotState.sol";
 
-
+/**
+ * @title SnapshotStateModule
+ * @notice Exposes public snapshot read functions for balances, total supply, and batch snapshot queries.
+ */
 abstract contract SnapshotStateModule is SnapshotStateInternal, ISnapshotState  {
-    IERC20 internal immutable erc20;
+    IERC20SnapshotCompatible internal immutable erc20;
 
     /*//////////////////////////////////////////////////////////////
                             PUBLIC/EXTERNAL FUNCTIONS
@@ -18,6 +20,13 @@ abstract contract SnapshotStateModule is SnapshotStateInternal, ISnapshotState  
     /*//////////////////////////////////////////////////////////////
                          VIEW FUNCTIONS
     //////////////////////////////////////////////////////////////*/
+    /**
+    * @inheritdoc ISnapshotState
+    */
+    function snapshotExists(uint256 time) public view override(ISnapshotState) returns (bool) {
+        return _isScheduledSnapshot(time);
+    }
+
     /**
     * @inheritdoc ISnapshotState
     */
@@ -52,7 +61,24 @@ abstract contract SnapshotStateModule is SnapshotStateInternal, ISnapshotState  
     /**
     * @inheritdoc ISnapshotState
     */
+    function snapshotBalanceOfExact(
+        uint256 time,
+        address tokenHolder
+    ) public view override(ISnapshotState) returns (uint256) {
+        return _snapshotBalanceOfExact(erc20, time, tokenHolder);
+    }
+
+    /**
+    * @inheritdoc ISnapshotState
+    */
     function snapshotTotalSupply(uint256 time) public view override(ISnapshotState) returns (uint256 totalSupply) {
         return _snapshotTotalSupply(erc20, time);
+    }
+
+    /**
+    * @inheritdoc ISnapshotState
+    */
+    function snapshotTotalSupplyExact(uint256 time) public view override(ISnapshotState) returns (uint256 totalSupply) {
+        return _snapshotTotalSupplyExact(erc20, time);
     }
 }

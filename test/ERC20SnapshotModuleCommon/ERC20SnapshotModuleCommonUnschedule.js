@@ -1,6 +1,8 @@
 const { time } = require('@nomicfoundation/hardhat-network-helpers')
 const { expect } = require('chai')
-const { SNAPSHOOTER_ROLE } = require('../utils')
+const {
+  expectUnauthorizedSnapshotAdmin
+} = require('./ERC20SnapshotModuleUtils/authorization')
 const {
   checkArraySnapshot
 } = require('./ERC20SnapshotModuleUtils/ERC20SnapshotModuleUtils')
@@ -25,9 +27,12 @@ function ERC20SnapshotModuleCommonUnschedule () {
       let snapshots = await this.transferEngineMock.getNextSnapshots()
       expect(snapshots.length).to.equal(1)
       expect(snapshots[0]).to.equal(SNAPSHOT_TIME)
-      await this.transferEngineMock
+      this.logs = await this.transferEngineMock
         .connect(this.admin)
         .unscheduleSnapshotNotOptimized(SNAPSHOT_TIME)
+      await expect(this.logs)
+        .to.emit(this.transferEngineMock, 'SnapshotUnschedule')
+        .withArgs(SNAPSHOT_TIME)
       snapshots = await this.transferEngineMock.getNextSnapshots()
       expect(snapshots.length).to.equal(0)
     })
@@ -91,7 +96,7 @@ function ERC20SnapshotModuleCommonUnschedule () {
       checkArraySnapshot(snapshots, [
         this.snapshotTime1,
         this.snapshotTime2,
-        this.RANDOM_SNAPSHOT,
+        RANDOM_SNAPSHOT,
         this.snapshotTime3,
         this.snapshotTime4,
         this.snapshotTime5
@@ -147,16 +152,13 @@ function ERC20SnapshotModuleCommonUnschedule () {
       expect(snapshots.length).to.equal(1)
       expect(snapshots[0]).to.equal(SNAPSHOT_TIME)
       // Act
-      await expect(
+      await expectUnauthorizedSnapshotAdmin(
+        this,
         this.transferEngineMock
           .connect(this.address1)
-          .unscheduleSnapshotNotOptimized(SNAPSHOT_TIME)
+          .unscheduleSnapshotNotOptimized(SNAPSHOT_TIME),
+        this.address1
       )
-        .to.be.revertedWithCustomError(
-          this.transferEngineMock,
-          'AccessControlUnauthorizedAccount'
-        )
-        .withArgs(this.address1.address, SNAPSHOOTER_ROLE)
       // Assert
       snapshots = await this.transferEngineMock.getNextSnapshots()
       expect(snapshots.length).to.equal(1)
@@ -182,16 +184,13 @@ function ERC20SnapshotModuleCommonUnschedule () {
     })
 
     it('reverts when calling from non-admin', async function () {
-      await expect(
+      await expectUnauthorizedSnapshotAdmin(
+        this,
         this.transferEngineMock
           .connect(this.address1)
-          .unscheduleLastSnapshot(this.snapshotTime)
+          .unscheduleLastSnapshot(this.snapshotTime),
+        this.address1
       )
-        .to.be.revertedWithCustomError(
-          this.transferEngineMock,
-          'AccessControlUnauthorizedAccount'
-        )
-        .withArgs(this.address1.address, SNAPSHOOTER_ROLE)
     })
 
     it('reverts if no snapshot is scheduled', async function () {

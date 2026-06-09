@@ -5,15 +5,34 @@ pragma solidity ^0.8.20;
 /* ==== Library === */
 import {SnapshotBase} from "../library/SnapshotBase.sol";
 import {ISnapshotScheduler} from "../interface/ISnapshotScheduler.sol";
+
+/**
+ * @title SnapshotSchedulerModule
+ * @notice Exposes authorized snapshot scheduling, rescheduling, unscheduling, and materialization entrypoints.
+ */
 abstract contract SnapshotSchedulerModule is SnapshotBase, ISnapshotScheduler {
+    /*//////////////////////////////////////////////////////////////
+                               MODIFIERS
+    //////////////////////////////////////////////////////////////*/
+    modifier onlySnapshotManager() {
+        _authorizeSnapshot();
+        _;
+    }
+
     /*//////////////////////////////////////////////////////////////
                             PUBLIC/EXTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
     /**
     * @inheritdoc ISnapshotScheduler
     */
-    function scheduleSnapshot(uint256 time) public virtual {
-         _authorizeSnapshot();
+    function poke() public virtual onlySnapshotManager {
+        SnapshotBase._setCurrentSnapshot();
+    }
+
+    /**
+    * @inheritdoc ISnapshotScheduler
+    */
+    function scheduleSnapshot(uint256 time) public virtual onlySnapshotManager {
         SnapshotBase._scheduleSnapshot(time);
     }
 
@@ -22,8 +41,7 @@ abstract contract SnapshotSchedulerModule is SnapshotBase, ISnapshotScheduler {
     */
     function scheduleSnapshotNotOptimized(
         uint256 time
-    ) public virtual {
-        _authorizeSnapshot();
+    ) public virtual onlySnapshotManager {
         SnapshotBase._scheduleSnapshotNotOptimized(time);
     }
 
@@ -33,8 +51,7 @@ abstract contract SnapshotSchedulerModule is SnapshotBase, ISnapshotScheduler {
     function rescheduleSnapshot(
         uint256 oldTime,
         uint256 newTime
-    ) public virtual {
-        _authorizeSnapshot();
+    ) public virtual onlySnapshotManager {
         SnapshotBase._rescheduleSnapshot(oldTime, newTime);
     }
 
@@ -43,8 +60,7 @@ abstract contract SnapshotSchedulerModule is SnapshotBase, ISnapshotScheduler {
     */
     function unscheduleLastSnapshot(
         uint256 time
-    ) public virtual {
-        _authorizeSnapshot();
+    ) public virtual onlySnapshotManager {
         SnapshotBase._unscheduleLastSnapshot(time);
     }
 
@@ -53,8 +69,7 @@ abstract contract SnapshotSchedulerModule is SnapshotBase, ISnapshotScheduler {
     */
     function unscheduleSnapshotNotOptimized(
         uint256 time
-    ) public virtual  {
-        _authorizeSnapshot();
+    ) public virtual onlySnapshotManager {
         SnapshotBase._unscheduleSnapshotNotOptimized(time);
     }
 

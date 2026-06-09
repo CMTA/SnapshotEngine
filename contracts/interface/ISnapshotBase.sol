@@ -19,6 +19,13 @@ interface ISnapshotBase {
     */
     event SnapshotUnschedule(uint256 indexed time);
 
+    /**
+    * @notice Emitted when a scheduled snapshot becomes the current materialized snapshot.
+    * @param time The snapshot timestamp that was materialized.
+    * @param blockNumber The block number at which the materialization occurred.
+    */
+    event SnapshotMaterialized(uint256 indexed time, uint256 indexed blockNumber);
+
      /* ============ Erros ============ */
      /**
      * @notice Thrown when attempting to schedule a snapshot at a time earlier than the current block timestamp.
